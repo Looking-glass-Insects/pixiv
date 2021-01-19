@@ -1,2 +1,4 @@
+include ':scan'
+include ':baselibrary'
 include ':app'
 rootProject.name = "pixiv"

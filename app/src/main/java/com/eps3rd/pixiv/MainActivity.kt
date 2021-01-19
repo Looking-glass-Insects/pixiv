@@ -1,7 +1,7 @@
 package com.eps3rd.pixiv
 
-import android.R.id.tabs
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import androidx.annotation.Nullable
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -13,11 +13,19 @@ import androidx.fragment.app.FragmentPagerAdapter
 import androidx.viewpager.widget.ViewPager
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+import com.alibaba.android.arouter.launcher.ARouter
+import com.eps3rd.baselibrary.Constants
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import java.lang.Exception
 
 
 class MainActivity : AppCompatActivity() {
+
+    companion object {
+        private const val TAG = "MainActivity"
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,10 +46,26 @@ class MainActivity : AppCompatActivity() {
         val tabLayout = findViewById<TabLayout>(R.id.tab_layout)
         val viewPager = findViewById<ViewPager2>(R.id.view_pager)
 
-        val tabFragmentList: MutableList<BlankFragment> = ArrayList()
-        for (i in 0 until 3) {
-            tabFragmentList.add(BlankFragment.newInstance("p1","p2"))
+        val tabFragmentList: MutableList<Fragment> = ArrayList()
+
+
+        try {
+
+            val param = Bundle()
+            param.putString("param1", "t1")
+            param.putString("param2", "t2")
+            val fragment: Fragment =
+                ARouter.getInstance().build(Constants.FRAGMENT_PATH_BLANK)
+                    .with(param)
+                    .navigation() as Fragment
+
+            for (i in 0 until 1) {
+                tabFragmentList.add(fragment)
+            }
+        } catch (e: Exception) {
+            Log.d(Companion.TAG,"error to add fragments")
         }
+
 
         viewPager.adapter = object : FragmentStateAdapter(
             supportFragmentManager,
@@ -56,7 +80,7 @@ class MainActivity : AppCompatActivity() {
             }
 
         }
-        //设置TabLayout和ViewPager联动
+
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
             tab.text = "OBJECT ${(position + 1)}"
         }.attach()
@@ -67,4 +91,6 @@ class MainActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.main, menu)
         return true
     }
+
+
 }
