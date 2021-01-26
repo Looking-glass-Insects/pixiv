@@ -1,30 +1,28 @@
 package com.eps3rd.pixiv
 
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewParent
+import android.view.WindowInsetsController
 import android.widget.CompoundButton
 import android.widget.TextView
-import androidx.annotation.Nullable
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentPagerAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager.widget.ViewPager
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.alibaba.android.arouter.launcher.ARouter
 import com.eps3rd.baselibrary.Constants
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
-import java.lang.Exception
 
 
 class MainActivity : AppCompatActivity() {
@@ -42,7 +40,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         mDrawerHeader = findViewById(R.id.drawer_header)
         mList = findViewById(R.id.drawer_list)
-
+        setupStatusBar()
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         toolbar.setNavigationIcon(R.drawable.ic_baseline_menu_24)
         setSupportActionBar(toolbar)
@@ -95,6 +93,10 @@ class MainActivity : AppCompatActivity() {
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
             tab.text = "OBJECT ${(position + 1)}"
         }.attach()
+    }
+
+    private fun setupStatusBar() {
+//        window.statusBarColor = Color.TRANSPARENT
     }
 
     private fun setupDrawer() {

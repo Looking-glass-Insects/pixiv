@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="debug_200">#E9DDDD</color>
-    <color name="debug_500">#B4ABAB</color>
+    <color name="debug_500">#36BCFF</color>
     <color name="debug_700">#6E6767</color>
 
 
