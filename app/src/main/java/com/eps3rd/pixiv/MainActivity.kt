@@ -59,17 +59,19 @@ class MainActivity : AppCompatActivity() {
 
         setupDrawer()
 
-
         val tabFragmentList: MutableList<Fragment> = ArrayList()
         try {
+            val fragments = arrayOf(Constants.FRAGMENT_PATH_BLANK, Constants.FRAGMENT_PATH_SCAN)
             val param = Bundle()
             param.putString("param1", "t1")
             param.putString("param2", "t2")
-            val fragment: Fragment =
-                ARouter.getInstance().build(Constants.FRAGMENT_PATH_BLANK)
-                    .with(param)
-                    .navigation() as Fragment
-            for (i in 0 until 1) {
+            val params = arrayOf(param,null)
+
+            for ((f,param) in fragments zip params) {
+                val fragment: Fragment =
+                    ARouter.getInstance().build(f)
+                        .with(param)
+                        .navigation() as Fragment
                 tabFragmentList.add(fragment)
             }
         } catch (e: Exception) {
@@ -115,7 +117,7 @@ class MainActivity : AppCompatActivity() {
 
             override fun getSwitchListener(): CompoundButton.OnCheckedChangeListener? {
                 return CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
-                    Log.d(TAG,"isChecked:$isChecked")
+                    Log.d(TAG, "isChecked:$isChecked")
                 }
             }
         })
@@ -134,7 +136,7 @@ class MainActivity : AppCompatActivity() {
 
             override fun getSwitchListener(): CompoundButton.OnCheckedChangeListener? {
                 return CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
-                    Log.d(TAG,"isChecked:$isChecked")
+                    Log.d(TAG, "isChecked:$isChecked")
                 }
             }
         })

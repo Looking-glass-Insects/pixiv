@@ -5,6 +5,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
+import com.alibaba.android.arouter.facade.annotation.Route
+import com.eps3rd.baselibrary.Constants
 import com.eps3rd.scan.R
 
 // TODO: Rename parameter arguments, choose names that match
@@ -17,10 +20,12 @@ private const val ARG_PARAM2 = "param2"
  * Use the [ScanFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
+@Route(path = Constants.FRAGMENT_PATH_SCAN)
 class ScanFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+    private var mRecyclerView: RecyclerView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,7 +40,10 @@ class ScanFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_scan, container, false)
+        val view = inflater.inflate(R.layout.fragment_scan, container, false)
+        mRecyclerView = view.findViewById(R.id.items_img)
+        mRecyclerView?.isNestedScrollingEnabled = false
+        return view
     }
 
     companion object {
