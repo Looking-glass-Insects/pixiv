@@ -3,6 +3,11 @@ package com.eps3rd.pixiv
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
+import android.view.View
+import android.view.ViewGroup
+import android.view.ViewParent
+import android.widget.CompoundButton
+import android.widget.TextView
 import androidx.annotation.Nullable
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
@@ -10,6 +15,8 @@ import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentPagerAdapter
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
@@ -26,10 +33,16 @@ class MainActivity : AppCompatActivity() {
         private const val TAG = "MainActivity"
     }
 
+    private lateinit var mDrawerHeader: ViewGroup
+    private lateinit var mList: RecyclerView
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        mDrawerHeader = findViewById(R.id.drawer_header)
+        mList = findViewById(R.id.drawer_list)
+
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         toolbar.setNavigationIcon(R.drawable.ic_baseline_menu_24)
         setSupportActionBar(toolbar)
@@ -46,11 +59,11 @@ class MainActivity : AppCompatActivity() {
         val tabLayout = findViewById<TabLayout>(R.id.tab_layout)
         val viewPager = findViewById<ViewPager2>(R.id.view_pager)
 
+        setupDrawer()
+
+
         val tabFragmentList: MutableList<Fragment> = ArrayList()
-
-
         try {
-
             val param = Bundle()
             param.putString("param1", "t1")
             param.putString("param2", "t2")
@@ -58,12 +71,11 @@ class MainActivity : AppCompatActivity() {
                 ARouter.getInstance().build(Constants.FRAGMENT_PATH_BLANK)
                     .with(param)
                     .navigation() as Fragment
-
             for (i in 0 until 1) {
                 tabFragmentList.add(fragment)
             }
         } catch (e: Exception) {
-            Log.d(Companion.TAG,"error to add fragments")
+            Log.d(TAG, "error to add fragments")
         }
 
 
@@ -78,12 +90,56 @@ class MainActivity : AppCompatActivity() {
             override fun createFragment(position: Int): Fragment {
                 return tabFragmentList[position]
             }
-
         }
 
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
             tab.text = "OBJECT ${(position + 1)}"
         }.attach()
+    }
+
+    private fun setupDrawer() {
+        val adapter = ExpandListAdapter()
+
+        adapter.addItem(object : ExpandListAdapter.ItemStruct {
+            override fun getTitle(): String {
+                return "title"
+            }
+
+            override fun getExpandView(): View? {
+                val subTv = TextView(this@MainActivity)
+                subTv.text = "test subTv"
+                return subTv
+            }
+
+            override fun getSwitchListener(): CompoundButton.OnCheckedChangeListener? {
+                return CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
+                    Log.d(TAG,"isChecked:$isChecked")
+                }
+            }
+        })
+
+
+        adapter.addItem(object : ExpandListAdapter.ItemStruct {
+            override fun getTitle(): String {
+                return "title2"
+            }
+
+            override fun getExpandView(): View? {
+                val subTv = TextView(this@MainActivity)
+                subTv.text = "test subTv2"
+                return subTv
+            }
+
+            override fun getSwitchListener(): CompoundButton.OnCheckedChangeListener? {
+                return CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
+                    Log.d(TAG,"isChecked:$isChecked")
+                }
+            }
+        })
+
+
+        mList.adapter = adapter
+        mList.layoutManager = LinearLayoutManager(this)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
