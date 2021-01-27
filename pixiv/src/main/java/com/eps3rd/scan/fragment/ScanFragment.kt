@@ -40,7 +40,7 @@ class ScanFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_scan, container, false)
+        val view = inflater.inflate(R.layout.fragment_imgs, container, false)
         mRecyclerView = view.findViewById(R.id.items_img)
         mRecyclerView?.isNestedScrollingEnabled = false
         return view
