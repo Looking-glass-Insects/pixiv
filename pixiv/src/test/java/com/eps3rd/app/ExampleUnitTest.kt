@@ -1,4 +1,4 @@
-package com.eps3rd.scan
+package com.eps3rd.app
 
 import org.junit.Test
 

@@ -12,10 +12,11 @@
 
     <ImageView
         android:id="@+id/iv_collection"
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/card_collection_size"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"
         android:layout_marginRight="@dimen/margin_img_collection"
         android:layout_marginBottom="@dimen/margin_img_collection"
-        app:srcCompat="@mipmap/collection" />
+        android:clickable="true"
+        app:srcCompat="@drawable/ic_round_favorite_24" />
 </FrameLayout>

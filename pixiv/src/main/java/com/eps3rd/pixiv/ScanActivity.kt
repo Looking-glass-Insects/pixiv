@@ -1,8 +1,9 @@
-package com.eps3rd.scan
+package com.eps3rd.pixiv
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.eps3rd.scan.fragment.BlankFragment
+import com.eps3rd.app.R
+import com.eps3rd.pixiv.fragment.BlankFragment
 
 class ScanActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

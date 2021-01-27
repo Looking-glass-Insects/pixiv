@@ -1,15 +1,11 @@
-package com.eps3rd.pixiv
+package com.eps3rd.app
 
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
-import android.widget.Switch
 import android.widget.TextView
-import android.widget.ToggleButton
-import androidx.appcompat.widget.SwitchCompat
-import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.switchmaterial.SwitchMaterial
 

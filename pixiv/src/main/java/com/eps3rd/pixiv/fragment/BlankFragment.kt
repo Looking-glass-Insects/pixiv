@@ -1,4 +1,4 @@
-package com.eps3rd.scan.fragment
+package com.eps3rd.pixiv.fragment
 
 import android.os.Bundle
 import android.util.Log
@@ -10,7 +10,7 @@ import android.widget.ImageView
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.bumptech.glide.Glide
 import com.eps3rd.baselibrary.Constants
-import com.eps3rd.scan.R
+import com.eps3rd.app.R
 
 
 @Route(path = Constants.FRAGMENT_PATH_BLANK)

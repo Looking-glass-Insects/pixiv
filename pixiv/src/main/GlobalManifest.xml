@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.eps3rd.scan">
+    package="com.eps3rd.app">
 
     <application>
-        <activity android:name=".ScanActivity" />
+        <activity android:name="com.eps3rd.pixiv.ScanActivity" />
     </application>
 
 </manifest>

@@ -1,13 +1,11 @@
-package com.eps3rd.pixiv
+package com.eps3rd.app
 
-import android.graphics.Color
-import android.os.Build
+
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowInsetsController
 import android.widget.CompoundButton
 import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle

@@ -1,4 +1,4 @@
-package com.eps3rd.pixiv
+package com.eps3rd.app
 
 import android.content.Context
 import android.util.AttributeSet
