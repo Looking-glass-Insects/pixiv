@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="debug_200">#E9DDDD</color>
+    <color name="debug_200">#F1F1F1</color>
     <color name="debug_500">#36BCFF</color>
-    <color name="debug_700">#6E6767</color>
+    <color name="debug_700">#787878</color>
 
 
     <color name="teal_200">#FF03DAC5</color>
@@ -14,4 +14,12 @@
     <color name="light_blue_A200">#FF40C4FF</color>
     <color name="light_blue_A400">#FF00B0FF</color>
     <color name="black_overlay">#66000000</color>
+
+
+
+
+    <color name="design_default_background">#FFE0E0E0</color>
+    <color name="color_primary">#36BCFF</color>
+    <color name="color_secondary">#36BCFF</color>
+    <color name="transparent">#00FFFFFF</color>
 </resources>

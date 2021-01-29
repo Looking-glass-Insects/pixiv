@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/drawer_item_padding">
+
+    <ImageView
+        android:id="@+id/manage_work"
+        android:layout_width="@dimen/drawer_expand_icon_size"
+        android:layout_height="@dimen/drawer_expand_icon_size"
+        android:src="@drawable/ic_round_image_24"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_manage_work"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_manage_work"
+        app:tint="@color/black_overlay" />
+
+    <TextView
+        android:id="@+id/tv_manage_work"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/drawer_user_manage_work"
+        android:layout_marginStart="@dimen/drawer_item_margin"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        app:layout_constraintStart_toEndOf="@+id/manage_work"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/collection"
+        android:layout_width="@dimen/drawer_expand_icon_size"
+        android:layout_height="@dimen/drawer_expand_icon_size"
+        android:src="@drawable/ic_round_favorite_border_24"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_collection"
+        app:layout_constraintStart_toStartOf="@+id/manage_work"
+        app:layout_constraintTop_toTopOf="@+id/tv_collection"
+        app:tint="@color/black_overlay" />
+
+    <TextView
+        android:id="@+id/tv_collection"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/drawer_user_collection"
+        android:background="?attr/selectableItemBackground"
+        android:layout_marginTop="@dimen/drawer_item_margin"
+        android:clickable="true"
+        app:layout_constraintStart_toStartOf="@+id/tv_manage_work"
+        app:layout_constraintTop_toBottomOf="@+id/tv_manage_work" />
+
+
+    <TextView
+        android:id="@+id/tv_following"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:text="@string/drawer_user_following"
+        android:layout_marginTop="@dimen/drawer_item_margin"
+        android:clickable="true"
+        app:layout_constraintStart_toStartOf="@+id/tv_collection"
+        app:layout_constraintTop_toBottomOf="@+id/tv_collection" />
+
+    <TextView
+        android:id="@+id/tv_follower"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:text="@string/drawer_user_follower"
+        android:layout_marginTop="@dimen/drawer_item_margin"
+        android:clickable="true"
+        app:layout_constraintStart_toStartOf="@+id/tv_following"
+        app:layout_constraintTop_toBottomOf="@+id/tv_following" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

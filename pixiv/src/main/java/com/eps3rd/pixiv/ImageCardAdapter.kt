@@ -106,9 +106,14 @@ class ImageCardAdapter : RecyclerView.Adapter<ImageCardAdapter.ImageCardVH>() {
 
         fun setImage(uri: Uri) {
             this.mUri = uri
-            mCollected = this.mCollectionCallback?.isCollected(uri) ?: false
             if (mImageView == null)
                 return
+
+            mCollected = this.mCollectionCallback?.isCollected(uri) ?: false
+            Glide.with(mCollectionButton!!)
+                .load(if (mCollected) R.drawable.ic_round_favorite_24 else R.drawable.ic_round_favorite_border_24)
+                .into(mCollectionButton!!)
+
             Glide.with(mImageView!!)
                 .load(uri)
                 .placeholder(R.drawable.ic_launcher_background)

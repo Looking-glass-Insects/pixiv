@@ -3,13 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_drawer_item"
+    android:clickable="true"
+    android:padding="@dimen/drawer_item_padding"
+    android:layout_marginTop="@dimen/drawer_item_margin">
 
     <ImageView
         android:id="@+id/iv_expand"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="TODO"
+        android:layout_width="@dimen/drawer_expand_icon_size"
+        android:layout_height="@dimen/drawer_expand_icon_size"
         android:src="@drawable/ic_round_dehaze_24"
         app:layout_constraintBottom_toBottomOf="@+id/tv_expand_title"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -21,6 +24,7 @@
         android:layout_height="wrap_content"
         android:text="title"
         android:textAppearance="?attr/textAppearanceListItem"
+        android:layout_marginStart="@dimen/drawer_item_margin"
         app:layout_constraintBottom_toBottomOf="@+id/switch_expand_item"
         app:layout_constraintStart_toEndOf="@+id/iv_expand"
         app:layout_constraintTop_toTopOf="@+id/switch_expand_item" />

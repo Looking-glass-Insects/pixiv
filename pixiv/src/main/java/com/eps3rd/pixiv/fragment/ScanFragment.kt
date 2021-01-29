@@ -2,6 +2,7 @@ package com.eps3rd.pixiv.fragment
 
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -17,6 +18,10 @@ import com.eps3rd.app.R
 
 @Route(path = Constants.FRAGMENT_PATH_SCAN)
 class ScanFragment : Fragment() {
+
+    companion object{
+        const val TAG = "ScanFragment"
+    }
 
     private var mRecyclerView: RecyclerView? = null
     private val mImagesAdapter = ImageCardAdapter()
@@ -38,7 +43,8 @@ class ScanFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        mImagesAdapter.addItem(ImageCardAdapter.ImageStruct(Uri.parse("android.resource://com.eps3rd.pixiv/" + R.mipmap.ic_launcher_round)))
+        Log.d(TAG,"${javaClass.`package`.name}")
+        mImagesAdapter.addItem(ImageCardAdapter.ImageStruct(Uri.parse("android.resource://com.eps3rd.pixiv/"+ R.mipmap.ic_launcher_round)))
     }
 
 }
