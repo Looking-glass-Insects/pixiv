@@ -19,49 +19,46 @@
         android:layout_gravity="start"
         android:clickable="true"
         android:background="@color/design_default_background">
-        <com.google.android.material.appbar.AppBarLayout
-            android:id="@+id/drawer_app_bar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <com.google.android.material.appbar.CollapsingToolbarLayout
-                android:id="@+id/collapse"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
-                <FrameLayout
-                    android:id="@+id/drawer_header"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/drawer_header_height"
-                    android:background="@drawable/ic_launcher_foreground"
-                    app:layout_collapseMode="parallax"
-                    app:layout_collapseParallaxMultiplier="0.7">
 
-                </FrameLayout>
-                <androidx.appcompat.widget.Toolbar
-                    android:id="@+id/drawer_toolbar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|start"
-                    android:background="@color/debug_200"
-                    app:layout_collapseMode="pin"
-                    app:elevation="0dp">
-                    <ImageView
-                        android:id="@+id/drawer_user_img"
-                        android:layout_width="@dimen/drawer_user_img_size"
-                        android:layout_height="@dimen/drawer_user_img_size"/>
-                </androidx.appcompat.widget.Toolbar>
-            </com.google.android.material.appbar.CollapsingToolbarLayout>
-        </com.google.android.material.appbar.AppBarLayout>
-
-        <androidx.core.widget.NestedScrollView
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/debug_500">
+
+            <ImageView
+                android:id="@+id/drawer_header"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/drawer_header_height"
+                android:background="@drawable/ic_launcher_foreground"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/drawer_user_img"
+                android:layout_width="@dimen/drawer_user_img_before_collapse_size"
+                android:layout_height="@dimen/drawer_user_img_before_collapse_size"
+                app:layout_constraintBottom_toBottomOf="@+id/drawer_header"
+                app:layout_constraintEnd_toEndOf="@+id/drawer_header"
+                app:layout_constraintStart_toStartOf="@+id/drawer_header"
+                app:layout_constraintTop_toBottomOf="@+id/drawer_header" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/nestedScrollView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:translationY="200dp"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/drawer_list"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content" />
         </androidx.core.widget.NestedScrollView>
+
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </androidx.drawerlayout.widget.DrawerLayout>

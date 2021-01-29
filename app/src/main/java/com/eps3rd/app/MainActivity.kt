@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
         private const val TAG = "MainActivity"
     }
 
-    private lateinit var mDrawerHeader: ViewGroup
+    private lateinit var mDrawerHeader: ImageView
     private lateinit var mList: RecyclerView
     private lateinit var mUserImage: ImageView
     private lateinit var mBottomButton: View
@@ -66,13 +66,13 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        val drawerToolbar = findViewById<Toolbar>(R.id.drawer_toolbar)
-        val drawerAppBar = findViewById<AppBarLayout>(R.id.drawer_app_bar)
-        val maxExpandSize = resources.getDimensionPixelSize(R.dimen.drawer_header_height)
-        drawerAppBar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
-            Log.d(TAG,"expand:$verticalOffset ,$maxExpandSize, ${drawerToolbar.height}")
-            drawerToolbar.background.alpha = (abs(verticalOffset)/(maxExpandSize-drawerToolbar.height).toFloat() * 255).toInt()
-        })
+//        val drawerToolbar = findViewById<Toolbar>(R.id.drawer_toolbar)
+//        val drawerAppBar = findViewById<AppBarLayout>(R.id.drawer_app_bar)
+//        val maxExpandSize = resources.getDimensionPixelSize(R.dimen.drawer_header_height)
+//        drawerAppBar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
+//            Log.d(TAG,"expand:$verticalOffset ,$maxExpandSize, ${drawerToolbar.height}")
+//            drawerToolbar.background.alpha = (abs(verticalOffset)/(maxExpandSize-drawerToolbar.height).toFloat() * 255).toInt()
+//        })
 
         setupStatusBar()
         val toolbar: Toolbar = findViewById(R.id.toolbar)
