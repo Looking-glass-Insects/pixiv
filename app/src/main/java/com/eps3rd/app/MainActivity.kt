@@ -45,6 +45,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mDrawerHeader: ViewGroup
     private lateinit var mList: RecyclerView
     private lateinit var mUserImage: ImageView
+    private lateinit var mBottomButton: View
+    private lateinit var mBottomArea: ViewGroup
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,7 +55,16 @@ class MainActivity : AppCompatActivity() {
         mDrawerHeader = findViewById(R.id.drawer_header)
         mList = findViewById(R.id.drawer_list)
         mUserImage = findViewById(R.id.drawer_user_img)
+        mBottomButton = findViewById(R.id.bottom_button)
+        mBottomArea = findViewById(R.id.main_bottom)
 
+        mBottomButton.setOnClickListener {
+            if (mBottomArea.visibility == View.GONE){
+                BottomAreaBehavior.show(mBottomArea)
+            }else{
+                BottomAreaBehavior.hide(mBottomArea)
+            }
+        }
 
         val drawerToolbar = findViewById<Toolbar>(R.id.drawer_toolbar)
         val drawerAppBar = findViewById<AppBarLayout>(R.id.drawer_app_bar)
@@ -113,6 +125,8 @@ class MainActivity : AppCompatActivity() {
                 return tabFragmentList[position]
             }
         }
+
+
 
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
             tab.text = "OBJECT ${(position + 1)}"

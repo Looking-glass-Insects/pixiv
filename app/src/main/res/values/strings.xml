@@ -25,4 +25,7 @@
     <string name="drawer_user_collection">Collection</string>
     <string name="drawer_user_following">Following</string>
     <string name="drawer_user_follower">Followers</string>
+
+    <string name="behavior_bottom_area">com.eps3rd.app.BottomAreaBehavior</string>
+    <string name="behavior_bottom_button">com.eps3rd.app.BottomButtonBehavior</string>
 </resources>

@@ -3,4 +3,5 @@
     <dimen name="card_size">180dp</dimen>
     <dimen name="margin_img_collection">5dp</dimen>
     <dimen name="card_collection_size">25dp</dimen>
+    <dimen name="author_small_icon_size">25dp</dimen>
 </resources>

@@ -9,4 +9,5 @@
     <color name="white">#FFFFFFFF</color>
 
     <color name="debug_color1">#6FD6FF</color>
+    <color name="overlay">#88141414</color>
 </resources>

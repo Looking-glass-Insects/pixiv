@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.eps3rd.baselibrary.Constants
@@ -44,7 +43,7 @@ class ScanFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         Log.d(TAG,"${javaClass.`package`.name}")
-        mImagesAdapter.addItem(ImageCardAdapter.ImageStruct(Uri.parse("android.resource://com.eps3rd.pixiv/"+ R.mipmap.ic_launcher_round)))
+        mImagesAdapter.addItem(ImageCardAdapter.CardStruct(Uri.parse("android.resource://com.eps3rd.pixiv/"+ R.mipmap.ic_launcher_round)))
     }
 
 }
