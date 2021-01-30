@@ -4,6 +4,7 @@ package com.eps3rd.app
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.KeyEvent
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
@@ -22,7 +23,8 @@ import androidx.viewpager2.widget.ViewPager2
 import com.alibaba.android.arouter.launcher.ARouter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.FitCenter
-import com.eps3rd.baselibrary.Constants
+import com.eps3rd.pixiv.Constants
+import com.eps3rd.pixiv.fragment.HomeFragment
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
@@ -38,7 +40,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mUserImage: ImageView
     private lateinit var mBottomButton: View
     private lateinit var mBottomArea: ViewGroup
-
+    private val mTabFragmentList: MutableList<Fragment> = ArrayList()
+    private lateinit var mViewPagerAdapter: FragmentStateAdapter
+    private val  mPageIds : MutableList<Long> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,6 +70,7 @@ class MainActivity : AppCompatActivity() {
 //        })
 
         setupStatusBar()
+
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         toolbar.setNavigationIcon(R.drawable.ic_baseline_menu_24)
         setSupportActionBar(toolbar)
@@ -84,7 +89,7 @@ class MainActivity : AppCompatActivity() {
 
         setupDrawer()
 
-        val tabFragmentList: MutableList<Fragment> = ArrayList()
+
         try {
             val fragments = arrayOf(Constants.FRAGMENT_PATH_BLANK, Constants.FRAGMENT_PATH_HOME)
             val param = Bundle()
@@ -97,26 +102,34 @@ class MainActivity : AppCompatActivity() {
                     ARouter.getInstance().build(f)
                         .with(param)
                         .navigation() as Fragment
-                tabFragmentList.add(fragment)
+                mTabFragmentList.add(fragment)
+                mPageIds.add(fragment.hashCode().toLong())
             }
         } catch (e: Exception) {
-            Log.d(TAG, "error to add fragments")
+            Log.d(TAG, "error to add fragments${Log.getStackTraceString(e)}")
         }
 
-
-        viewPager.adapter = object : FragmentStateAdapter(
+        mViewPagerAdapter = object : FragmentStateAdapter(
             supportFragmentManager,
             lifecycle
         ) {
             override fun getItemCount(): Int {
-                return tabFragmentList.size
+                return mTabFragmentList.size
             }
 
             override fun createFragment(position: Int): Fragment {
-                return tabFragmentList[position]
+                return mTabFragmentList[position]
+            }
+
+            override fun containsItem(itemId: Long): Boolean {
+                return mPageIds.contains(itemId)
+            }
+
+            override fun getItemId(position: Int): Long {
+                return mTabFragmentList[position].hashCode().toLong()
             }
         }
-
+        viewPager.adapter = mViewPagerAdapter
 
 
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
@@ -124,6 +137,22 @@ class MainActivity : AppCompatActivity() {
         }.attach()
     }
 
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_BACK){
+            Log.d(TAG,"KEYCODE_BACK")
+            for (e in mTabFragmentList) {
+                Log.d(TAG,"e:$e")
+            }
+            if (mTabFragmentList[0] !is HomeFragment){
+                mTabFragmentList.removeAt(0)
+                mPageIds.removeAt(0)
+                mViewPagerAdapter.notifyItemRemoved(0)
+                return true
+            }
+        }
+        return super.onKeyDown(keyCode, event)
+    }
 
     private fun setupStatusBar() {
 //        window.statusBarColor = Color.TRANSPARENT

@@ -13,8 +13,8 @@ import com.eps3rd.pixiv.Constants
 import com.eps3rd.app.R
 
 
-@Route(path = Constants.FRAGMENT_PATH_BLANK)
-class BlankFragment : Fragment() {
+@Route(path = Constants.FRAGMENT_PATH_WORK_DETAIL)
+class WorkDetailFragment : Fragment() {
 
     private var param1: String? = null
     private var param2: String? = null

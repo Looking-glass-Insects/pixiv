@@ -2,7 +2,6 @@ package com.eps3rd.pixiv.fragment
 
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,7 +10,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.alibaba.android.arouter.facade.annotation.Route
-import com.eps3rd.baselibrary.Constants
+import com.eps3rd.pixiv.Constants
 import com.eps3rd.pixiv.ImageCardAdapter
 import com.eps3rd.app.R
 

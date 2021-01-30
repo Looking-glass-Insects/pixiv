@@ -5,6 +5,7 @@
     android:id="@+id/container"
     android:padding="@dimen/card_margin_small"
     android:clickable="true"
+    android:focusableInTouchMode="true"
     android:foreground="@drawable/card_foreground"
     android:layout_width="@dimen/card_size"
     android:layout_height="@dimen/card_size">
