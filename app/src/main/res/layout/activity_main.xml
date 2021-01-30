@@ -24,7 +24,8 @@
             android:id="@+id/constraintLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/debug_500">
+            android:background="@color/debug_500"
+            app:layout_behavior="@string/drawer_collapse_behavior">
 
             <ImageView
                 android:id="@+id/drawer_header"
@@ -47,11 +48,12 @@
 
 
         <androidx.core.widget.NestedScrollView
+            android:visibility="gone"
             android:id="@+id/nestedScrollView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:translationY="200dp"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            app:layout_behavior="@string/drawer_collapse_behavior">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/drawer_list"

@@ -11,20 +11,33 @@ class BottomAreaBehavior : CoordinatorLayout.Behavior<View> {
 
     companion object{
         const val TAG = "BottomAreaBehavior"
+        var mAnim = false
 
         fun hide(view:View){
+            if (view.visibility == View.GONE || mAnim)return
             view.animate()
                 .alpha(0f)
-                .translationYBy(80f)
-                .withEndAction { view.visibility = View.GONE }
+                .translationY(80f)
+                .withStartAction {
+                    mAnim = true
+                }
+                .withEndAction {
+                    view.visibility = View.GONE
+                    mAnim = false
+                }
                 .start()
         }
 
         fun show(view:View){
+            if (view.visibility == View.VISIBLE || mAnim)return
             view.animate()
                 .alpha(1f)
                 .translationY(0f)
-                .withStartAction { view.visibility = View.VISIBLE }
+                .withStartAction {
+                    view.visibility = View.VISIBLE
+                    mAnim = true
+                }
+                .withEndAction { mAnim = false }
                 .start()
         }
 
@@ -35,12 +48,38 @@ class BottomAreaBehavior : CoordinatorLayout.Behavior<View> {
 
     var mY = -1f
 
+    override fun onStartNestedScroll(
+        coordinatorLayout: CoordinatorLayout,
+        child: View,
+        directTargetChild: View,
+        target: View,
+        axes: Int,
+        type: Int
+    ): Boolean {
+        return !mAnim
+    }
+
+    override fun onNestedScroll(
+        coordinatorLayout: CoordinatorLayout,
+        child: View,
+        target: View,
+        dxConsumed: Int,
+        dyConsumed: Int,
+        dxUnconsumed: Int,
+        dyUnconsumed: Int,
+        type: Int,
+        consumed: IntArray
+    ) {
+        if (dyConsumed > 0 || dyUnconsumed > 0){
+            hide(child)
+        }
+    }
+
     override fun layoutDependsOn(
         parent: CoordinatorLayout,
         child: View,
         dependency: View
     ): Boolean {
-        Log.d(TAG,"layoutDependsOn:$dependency")
         return dependency is AppBarLayout
     }
 
@@ -49,9 +88,6 @@ class BottomAreaBehavior : CoordinatorLayout.Behavior<View> {
         child: View,
         dependency: View
     ): Boolean {
-
-//        Log.d(TAG,"onDependentViewChanged:$dependency")
-
         if (mY == -1f){
             mY = dependency.y
             return false
