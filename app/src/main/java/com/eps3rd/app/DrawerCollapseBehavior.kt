@@ -6,12 +6,14 @@ import android.util.Log
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.view.ViewCompat
+import kotlin.properties.Delegates
 
 class DrawerCollapseBehavior : CoordinatorLayout.Behavior<View> {
     constructor() : super()
-    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
-
+    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs){
+        mCollapsedSize = context?.resources?.getDimensionPixelSize(R.dimen.drawer_user_img_size) ?: 0
+    }
+    private var mCollapsedSize : Int = 0
 
     companion object {
         const val TAG = "DrawerCollapseBehavior"
@@ -26,7 +28,6 @@ class DrawerCollapseBehavior : CoordinatorLayout.Behavior<View> {
         axes: Int,
         type: Int
     ): Boolean {
-        Log.d(TAG, "onStartNestedScroll")
         return child is ConstraintLayout && axes == View.SCROLL_AXIS_VERTICAL
     }
 
@@ -39,7 +40,26 @@ class DrawerCollapseBehavior : CoordinatorLayout.Behavior<View> {
         consumed: IntArray,
         type: Int
     ) {
-        Log.d(TAG, "onNestedPreScroll")
-        child.translationY += dy
+
+        if (dy == 0)return
+        if (dy > 0 ){
+            if (child.height + child.translationY <= mCollapsedSize){
+                child.translationY = (mCollapsedSize - child.height).toFloat()
+                target.translationY = mCollapsedSize.toFloat()
+                return
+            }
+            child.translationY -= dy
+            target.translationY -= dy
+            consumed[1] = dy
+        }else{
+            if (child.translationY >= 0){
+                child.translationY  = 0f
+                target.translationY = child.height.toFloat()
+                return
+            }
+            child.translationY -= dy
+            target.translationY -= dy
+            consumed[1] = dy
+        }
     }
 }

@@ -1,7 +1,6 @@
 package com.eps3rd.app
 
 
-import android.media.Image
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -16,24 +15,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.alibaba.android.arouter.launcher.ARouter
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.CenterCrop
-import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.load.resource.bitmap.FitCenter
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.eps3rd.baselibrary.Constants
-import com.google.android.material.appbar.AppBarLayout
-import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
-import kotlin.math.abs
 
 
 class MainActivity : AppCompatActivity() {
@@ -95,7 +86,7 @@ class MainActivity : AppCompatActivity() {
 
         val tabFragmentList: MutableList<Fragment> = ArrayList()
         try {
-            val fragments = arrayOf(Constants.FRAGMENT_PATH_BLANK, Constants.FRAGMENT_PATH_SCAN)
+            val fragments = arrayOf(Constants.FRAGMENT_PATH_BLANK, Constants.FRAGMENT_PATH_HOME)
             val param = Bundle()
             param.putString("param1", "t1")
             param.putString("param2", "t2")

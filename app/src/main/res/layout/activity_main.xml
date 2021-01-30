@@ -48,12 +48,10 @@
 
 
         <androidx.core.widget.NestedScrollView
-            android:visibility="gone"
             android:id="@+id/nestedScrollView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:translationY="200dp"
-            app:layout_behavior="@string/drawer_collapse_behavior">
+            android:translationY="240dp">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/drawer_list"

@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
     <dimen name="card_size">180dp</dimen>
-    <dimen name="margin_img_collection">5dp</dimen>
+    <dimen name="card_margin_img_collection">5dp</dimen>
     <dimen name="card_collection_size">25dp</dimen>
-    <dimen name="author_small_icon_size">25dp</dimen>
+    <dimen name="card_author_small_icon_size">25dp</dimen>
+    <dimen name="card_overlay_height">15dp</dimen>
+    <dimen name="card_title_size">10sp</dimen>
+    <dimen name="card_author_size">8sp</dimen>
+    <dimen name="card_margin_small">3dp</dimen>
+    <dimen name="card_text_max_width">100dp</dimen>
+    <dimen name="fragment_default_padding">3dp</dimen>
 </resources>
