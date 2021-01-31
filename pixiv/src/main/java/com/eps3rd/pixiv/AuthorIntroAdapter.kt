@@ -59,7 +59,7 @@ class AuthorIntroAdapter : RecyclerView.Adapter<AuthorIntroAdapter.AuthorVH>() {
         private var mAuthorName: TextView
         private var mFollowButton: TextView
         private var mImageClickListener = ImageCardClickListener()
-
+        private var mAuthorIconClickListener = AuthorIconClickListener()
 
         val mStruct : AuthorStruct = AuthorStruct(ImageCardAdapter.ImageCardVH.NO_IMG_URI)
 
@@ -73,7 +73,9 @@ class AuthorIntroAdapter : RecyclerView.Adapter<AuthorIntroAdapter.AuthorVH>() {
             mImages.add(rootView.findViewById<ImageView>(R.id.img_3).apply{
                 this.setOnClickListener(mImageClickListener)
             })
-            mAuthorIcon = rootView.findViewById(R.id.icon)
+            mAuthorIcon = rootView.findViewById<ImageView>(R.id.icon).apply {
+                this.setOnClickListener(mAuthorIconClickListener)
+            }
             mAuthorName = rootView.findViewById(R.id.author_name)
             mFollowButton = rootView.findViewById(R.id.follow_btn)
 
