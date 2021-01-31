@@ -9,6 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.eps3rd.app.R
 
@@ -57,13 +58,21 @@ class AuthorIntroAdapter : RecyclerView.Adapter<AuthorIntroAdapter.AuthorVH>() {
         private var mAuthorIcon: ImageView
         private var mAuthorName: TextView
         private var mFollowButton: TextView
+        private var mImageClickListener = ImageCardClickListener()
+
 
         val mStruct : AuthorStruct = AuthorStruct(ImageCardAdapter.ImageCardVH.NO_IMG_URI)
 
         init {
-            mImages.add(rootView.findViewById(R.id.img_1))
-            mImages.add(rootView.findViewById(R.id.img_2))
-            mImages.add(rootView.findViewById(R.id.img_3))
+            mImages.add(rootView.findViewById<ImageView>(R.id.img_1).apply{
+                this.setOnClickListener(mImageClickListener)
+            })
+            mImages.add(rootView.findViewById<ImageView>(R.id.img_2).apply{
+                this.setOnClickListener(mImageClickListener)
+            })
+            mImages.add(rootView.findViewById<ImageView>(R.id.img_3).apply{
+                this.setOnClickListener(mImageClickListener)
+            })
             mAuthorIcon = rootView.findViewById(R.id.icon)
             mAuthorName = rootView.findViewById(R.id.author_name)
             mFollowButton = rootView.findViewById(R.id.follow_btn)
@@ -74,11 +83,18 @@ class AuthorIntroAdapter : RecyclerView.Adapter<AuthorIntroAdapter.AuthorVH>() {
         }
 
         private fun loadImg(imgView: ImageView, uri: Uri) {
+            val transform = if (imgView.id == R.id.icon){
+                GlideCircleBorderTransform(
+                    2,
+                    imgView.context.resources.getColor(R.color.black))
+            }else{
+                CenterCrop()
+            }
             Glide.with(imgView)
                 .load(uri)
                 .placeholder(R.drawable.ic_round_image_search_24)
                 .error(R.drawable.ic_round_broken_image_24)
-                .transform(FitCenter())
+                .transform(transform)
                 .into(imgView)
         }
 

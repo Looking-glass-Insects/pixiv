@@ -11,10 +11,13 @@ import android.view.animation.AccelerateInterpolator
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.alibaba.android.arouter.launcher.ARouter
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.eps3rd.app.R
+import com.eps3rd.baselibrary.Constants
 import com.eps3rd.pixiv.ImageCardAdapter.ImageCardVH.Companion.NO_IMG_URI
 
 
@@ -107,6 +110,8 @@ class ImageCardAdapter : RecyclerView.Adapter<ImageCardAdapter.ImageCardVH>() {
             mAuthorName = rootView.findViewById(R.id.author_name)
             mAuthorIcon = rootView.findViewById(R.id.author_small_icon)
 
+            rootView.setOnClickListener(ImageCardClickListener())
+
             mCollectionButton.setOnClickListener {
                 mCollected = mCollectionCallback?.isCollected(cardStruct.imgUri) ?: false
                 mCollected = !mCollected
@@ -152,7 +157,6 @@ class ImageCardAdapter : RecyclerView.Adapter<ImageCardAdapter.ImageCardVH>() {
             mImageCount.text = cardStruct.imageCount
         }
 
-
         fun setImage(uri: Uri) {
             this.cardStruct.imgUri = uri
 
@@ -165,7 +169,7 @@ class ImageCardAdapter : RecyclerView.Adapter<ImageCardAdapter.ImageCardVH>() {
                 .load(uri)
                 .placeholder(R.drawable.ic_round_image_search_24)
                 .error(R.drawable.ic_round_broken_image_24)
-                .transform(FitCenter())
+                .transform(CenterCrop())
                 .into(mImageView)
         }
 

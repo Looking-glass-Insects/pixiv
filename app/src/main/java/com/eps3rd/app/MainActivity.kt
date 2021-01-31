@@ -1,6 +1,7 @@
 package com.eps3rd.app
 
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -15,17 +16,20 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.FitCenter
-import com.eps3rd.pixiv.Constants
+import com.eps3rd.baselibrary.Constants
+import com.eps3rd.pixiv.GlideCircleBorderTransform
+import com.eps3rd.pixiv.Constants as PixivConstants
 import com.eps3rd.pixiv.fragment.HomeFragment
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import java.lang.IllegalStateException
 
-
+@Route(path = Constants.MAIN_ACTIVITY)
 class MainActivity : AppCompatActivity() {
 
     companion object {
@@ -33,21 +37,42 @@ class MainActivity : AppCompatActivity() {
     }
 
     private lateinit var mDrawerHeader: ImageView
-    private lateinit var mList: RecyclerView
+    private lateinit var mDrawerList: RecyclerView
     private lateinit var mUserImage: ImageView
     private lateinit var mBottomButton: View
     private lateinit var mBottomArea: ViewGroup
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var  viewPager: ViewPager2
-//    private val mTabFragmentList: MutableList<Fragment> = ArrayList()
     private lateinit var mViewPagerAdapter: MainActivityPagerAdapter
-//    private val  mPageIds : MutableList<Long> = ArrayList()
+
+    private val mDrawerItemClickListener: View.OnClickListener = View.OnClickListener {
+        val fragment: Fragment = when(it.tag){
+            DrawerItemTAG.ITEM_COLLECTION -> {
+                ARouter.getInstance().build(PixivConstants.FRAGMENT_PATH_COLLECTION)
+                    .navigation() as Fragment
+            }
+
+            DrawerItemTAG.ITEM_FOLLOWING -> {
+                    ARouter.getInstance().build(PixivConstants.FRAGMENT_PATH_FOLLOWING)
+                        .navigation() as Fragment
+            }
+            else ->{
+                throw IllegalStateException("NO SUCH TAG")
+            }
+        }
+
+        mViewPagerAdapter.addItem(fragment)
+        drawerLayout.closeDrawer(Gravity.LEFT)
+        viewPager.post {viewPager.currentItem = 0}
+
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         mDrawerHeader = findViewById(R.id.drawer_header)
-        mList = findViewById(R.id.drawer_list)
+        mDrawerList = findViewById(R.id.drawer_list)
         mUserImage = findViewById(R.id.drawer_user_img)
         mBottomButton = findViewById(R.id.bottom_button)
         mBottomArea = findViewById(R.id.main_bottom)
@@ -87,7 +112,7 @@ class MainActivity : AppCompatActivity() {
         )
         viewPager.adapter = mViewPagerAdapter
         try {
-            val fragments = arrayOf(Constants.FRAGMENT_PATH_BLANK, Constants.FRAGMENT_PATH_HOME)
+            val fragments = arrayOf(PixivConstants.FRAGMENT_PATH_BLANK, PixivConstants.FRAGMENT_PATH_HOME)
             val param = Bundle()
             param.putString("param1", "t1")
             param.putString("param2", "t2")
@@ -109,6 +134,23 @@ class MainActivity : AppCompatActivity() {
         }.attach()
     }
 
+    override fun onStop() {
+        super.onStop()
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        Log.d(TAG,"onNewIntent")
+        intent?.let {
+            val f = it.getStringExtra(Constants.MAIN_ACTIVITY_REQUEST) ?: return
+            val fragment: Fragment =
+                ARouter.getInstance()
+                    .build(f)
+                    .navigation() as Fragment
+            mViewPagerAdapter.addItem(fragment)
+            viewPager.post {viewPager.currentItem = 0}
+        }
+    }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK){
@@ -134,15 +176,14 @@ class MainActivity : AppCompatActivity() {
 
             override fun getExpandView(): View? {
                 val listView = layoutInflater.inflate(R.layout.item_expand_user,null)
-                listView.findViewById<View>(R.id.tv_following).setOnClickListener {
-                    val fragment: Fragment =
-                        ARouter.getInstance().build(Constants.FRAGMENT_PATH_FOLLOWING)
-                            .navigation() as Fragment
-                    mViewPagerAdapter.addItem(fragment)
-                    drawerLayout.closeDrawer(Gravity.LEFT)
-                    viewPager.post {viewPager.currentItem = 0}
+                listView.findViewById<View>(R.id.line2).apply {
+                    tag = DrawerItemTAG.ITEM_COLLECTION
+                    setOnClickListener(mDrawerItemClickListener)
                 }
-
+                listView.findViewById<View>(R.id.line3).apply {
+                    tag = DrawerItemTAG.ITEM_FOLLOWING
+                    setOnClickListener(mDrawerItemClickListener)
+                }
                 return listView
             }
 
@@ -173,13 +214,18 @@ class MainActivity : AppCompatActivity() {
         })
 
 
-        adapter.mTouchHelper.attachToRecyclerView(mList)
-        mList.adapter = adapter
-        mList.layoutManager = LinearLayoutManager(this)
+        adapter.mTouchHelper.attachToRecyclerView(mDrawerList)
+        mDrawerList.adapter = adapter
+        mDrawerList.layoutManager = LinearLayoutManager(this)
 
         Glide.with(this).
             load(Uri.parse("android.resource://com.eps3rd.pixiv/"+ R.drawable.bg_drawer_item)).
-            transform(FitCenter(),GlideCircleBorderTransform(4,resources.getColor(R.color.color_primary))).
+            transform(FitCenter(),
+                GlideCircleBorderTransform(
+                    4,
+                    resources.getColor(R.color.color_primary)
+                )
+            ).
             into(mUserImage)
 
     }
@@ -194,6 +240,4 @@ class MainActivity : AppCompatActivity() {
         var userImage: Uri? = null
         var userName: String = ""
     }
-
-
 }

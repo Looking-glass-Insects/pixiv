@@ -1,4 +1,4 @@
-package com.eps3rd.app
+package com.eps3rd.pixiv
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -6,7 +6,6 @@ import android.graphics.Paint
 import androidx.annotation.ColorInt
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
-import com.bumptech.glide.load.resource.bitmap.Rotate
 import com.bumptech.glide.util.Util
 import java.nio.ByteBuffer
 import java.security.MessageDigest
