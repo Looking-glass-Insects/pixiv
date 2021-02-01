@@ -13,49 +13,9 @@ import com.google.android.material.switchmaterial.SwitchMaterial
 import java.util.*
 import kotlin.collections.ArrayList
 
-class ExpandListAdapter : RecyclerView.Adapter<ExpandListAdapter.VH>() {
+class ExpandListAdapter : BaseDragAdapter<ExpandListAdapter.VH, ExpandListAdapter.ItemStruct>() {
     companion object {
         const val TAG = "ExpandListAdapter"
-    }
-
-    private val mItems: MutableList<ItemStruct> = ArrayList()
-    val mTitleTagList: MutableList<String> = ArrayList()
-
-    val mTouchHelper = ItemTouchHelper(object : Callback() {
-        override fun getMovementFlags(
-            recyclerView: RecyclerView,
-            viewHolder: RecyclerView.ViewHolder
-        ): Int {
-            val dragFlags = ItemTouchHelper.UP or ItemTouchHelper.DOWN
-            return makeMovementFlags(dragFlags, 0)
-        }
-
-        override fun onMove(
-            recyclerView: RecyclerView,
-            viewHolder: RecyclerView.ViewHolder,
-            target: RecyclerView.ViewHolder
-        ): Boolean {
-            val from = viewHolder.adapterPosition
-            val to = target.adapterPosition
-            if (from < 0 || to < 0) return false
-            if (to == from) {
-                return true
-            }
-            Collections.swap(mTitleTagList, from, to)
-            notifyItemMoved(from, to)
-            return true
-        }
-
-        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-
-        }
-
-    })
-
-
-    fun addItem(item: ItemStruct) {
-        mItems.add(item)
-        mTitleTagList.add(item.getItemTag())
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
@@ -122,9 +82,9 @@ class ExpandListAdapter : RecyclerView.Adapter<ExpandListAdapter.VH>() {
         }
     }
 
-    interface ItemStruct {
+    interface ItemStruct : BaseItem{
         fun getTitle(): String
-        fun getItemTag(): String
+        override fun getItemTag(): String
         fun getExpandView(): View?
         fun getSwitchListener(): CompoundButton.OnCheckedChangeListener? {
             return null

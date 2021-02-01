@@ -1,5 +1,6 @@
 package com.eps3rd.pixiv.fragment
 
+import android.content.res.Resources
 import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -12,10 +13,11 @@ import com.alibaba.android.arouter.facade.annotation.Route
 import com.eps3rd.pixiv.Constants
 import com.eps3rd.app.R
 import com.eps3rd.pixiv.AuthorIntroAdapter
+import com.eps3rd.pixiv.IFragment
 
 
 @Route(path = Constants.FRAGMENT_PATH_FOLLOWING)
-class FollowingFragment : Fragment() {
+class FollowingFragment : Fragment(), IFragment {
 
     companion object{
         const val TAG = "FollowingFragment"
@@ -57,6 +59,10 @@ class FollowingFragment : Fragment() {
         })
         mAdapter.addItems(items)
         // DEBUG CODE
+    }
+
+    override fun getFragmentTitle(): Int {
+        return R.string.fragment_following
     }
 
 }

@@ -11,10 +11,11 @@ import com.alibaba.android.arouter.facade.annotation.Route
 import com.bumptech.glide.Glide
 import com.eps3rd.pixiv.Constants
 import com.eps3rd.app.R
+import com.eps3rd.pixiv.IFragment
 
 
 @Route(path = Constants.FRAGMENT_PATH_WORK_DETAIL)
-class WorkDetailFragment : Fragment() {
+class WorkDetailFragment : Fragment(), IFragment {
 
     private var param1: String? = null
     private var param2: String? = null
@@ -38,6 +39,10 @@ class WorkDetailFragment : Fragment() {
                 .into(it)
         }
         return view
+    }
+
+    override fun getFragmentTitle(): Int {
+        return R.string.fragment_work_detail
     }
 
 }

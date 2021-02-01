@@ -26,6 +26,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.eps3rd.baselibrary.Constants
 import com.eps3rd.pixiv.GlideCircleBorderTransform
+import com.eps3rd.pixiv.IFragment
 import com.eps3rd.pixiv.fragment.CollectionFragment
 import com.eps3rd.pixiv.fragment.HomeFragment
 import com.google.android.material.tabs.TabLayout
@@ -39,7 +40,7 @@ class MainActivity : AppCompatActivity() {
     companion object {
         private const val TAG = "MainActivity"
         private const val KEY_DRAWER_ITEM = "KEY_DRAWER_ITEM"
-        private const val DEFAULT_DRAWER_ITEM = "User,title2"
+        private const val DEFAULT_DRAWER_ITEM = "User,Control,Debug"
     }
 
     private lateinit var mDrawerHeader: ImageView
@@ -114,13 +115,13 @@ class MainActivity : AppCompatActivity() {
         setupDrawer()
         setupBottom()
 
-        val tabLayout = findViewById<TabLayout>(R.id.tab_layout)
         mViewPager = findViewById<ViewPager2>(R.id.view_pager)
         mViewPagerAdapter = MainActivityPagerAdapter(
             supportFragmentManager,
             lifecycle
         )
         mViewPager.adapter = mViewPagerAdapter
+
         try {
             val fragments =
                 arrayOf(PixivConstants.FRAGMENT_PATH_BLANK, PixivConstants.FRAGMENT_PATH_HOME)
@@ -140,20 +141,21 @@ class MainActivity : AppCompatActivity() {
             Log.d(TAG, "error to add fragments${Log.getStackTraceString(e)}")
         }
 
+        val tabLayout = findViewById<TabLayout>(R.id.tab_layout)
         TabLayoutMediator(tabLayout, mViewPager) { tab, position ->
-            tab.text = "OBJECT ${(position + 1)}"
+            tab.text =resources.getString( (mViewPagerAdapter.getItem(position) as IFragment).getFragmentTitle())
         }.attach()
     }
 
     override fun onStop() {
         val kv: MMKV = MMKV.defaultMMKV()!!
         val builder = StringBuilder()
-        for (item in mDrawerItemAdapter.mTitleTagList) {
+        for (item in mDrawerItemAdapter.mTagList) {
             builder.append(item).append(",")
         }
         builder.deleteCharAt(builder.lastIndex)
         mDrawerItemPrefString = builder.toString()
-        Log.d(TAG,"onStop:DrawerItemPref $mDrawerItemPrefString")
+        Log.d(TAG, "onStop:DrawerItemPref $mDrawerItemPrefString")
         kv.encode(KEY_DRAWER_ITEM, mDrawerItemPrefString)
         super.onStop()
     }
@@ -168,7 +170,7 @@ class MainActivity : AppCompatActivity() {
                     .with(f.getBundle(Constants.MAIN_ACTIVITY_START_FRAGMENT_PARAM))
                     .navigation() as Fragment
 
-            Log.d(TAG,"onNewIntent:$fragment")
+            Log.d(TAG, "onNewIntent:$fragment")
             mViewPagerAdapter.addItem(fragment)
             mViewPager.post { mViewPager.currentItem = 0 }
         }
@@ -186,6 +188,12 @@ class MainActivity : AppCompatActivity() {
         return super.onKeyDown(keyCode, event)
     }
 
+    override fun onTrimMemory(level: Int) {
+        super.onTrimMemory(level)
+        Log.d(TAG, "onTrimMemory:$level")
+    }
+
+
     private fun setupStatusBar() {
 //        window.statusBarColor = Color.TRANSPARENT
     }
@@ -194,7 +202,7 @@ class MainActivity : AppCompatActivity() {
         val items = mDrawerItemPrefString.split(",")
 
         for (item in items) {
-            mDrawerItemAdapter.addItem(mDrawerItemProvider.mMap.get(item)!!)
+            mDrawerItemAdapter.addItem(DrawerItemProviderImpl.mMap.get(item)!!)
         }
 
         mDrawerItemAdapter.mTouchHelper.attachToRecyclerView(mDrawerList)
@@ -243,7 +251,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initDrawerItem() {
-        mDrawerItemProvider.mMap["User"] = object : ExpandListAdapter.ItemStruct {
+        DrawerItemProviderImpl.mMap["User"] = object : ExpandListAdapter.ItemStruct {
             override fun getTitle(): String {
                 return resources.getString(R.string.drawer_item_user)
             }
@@ -271,13 +279,33 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-        mDrawerItemProvider.mMap["title2"] = object : ExpandListAdapter.ItemStruct {
+        DrawerItemProviderImpl.mMap["Control"] = object : ExpandListAdapter.ItemStruct {
+            override fun getTitle(): String {
+                return resources.getString(R.string.drawer_item_control)
+            }
+
+            override fun getItemTag(): String {
+                return "Control"
+            }
+
+            override fun getExpandView(): View? {
+                val container = layoutInflater?.inflate(R.layout.item_expand_control, null)
+
+                return container
+            }
+
+            override fun getSwitchListener(): CompoundButton.OnCheckedChangeListener? {
+                return null
+            }
+        }
+
+        DrawerItemProviderImpl.mMap["Debug"] = object : ExpandListAdapter.ItemStruct {
             override fun getTitle(): String {
                 return resources.getString(R.string.drawer_item_debug)
             }
 
             override fun getItemTag(): String {
-                return "title2"
+                return "Debug"
             }
 
             override fun getExpandView(): View? {
@@ -311,7 +339,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private object mDrawerItemProvider : DrawerItemProvider {
+    private object DrawerItemProviderImpl : DrawerItemProvider {
         val mMap = HashMap<String, ExpandListAdapter.ItemStruct>()
 
         override fun getDrawerItemByTitle(title: String): ExpandListAdapter.ItemStruct {

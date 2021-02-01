@@ -1,5 +1,6 @@
 package com.eps3rd.pixiv.fragment
 
+import android.content.res.Resources
 import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -13,10 +14,11 @@ import com.alibaba.android.arouter.facade.annotation.Route
 import com.eps3rd.pixiv.Constants
 import com.eps3rd.pixiv.ImageCardAdapter
 import com.eps3rd.app.R
+import com.eps3rd.pixiv.IFragment
 
 
 @Route(path = Constants.FRAGMENT_PATH_HOME)
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), IFragment {
 
     companion object{
         const val TAG = "HomeFragment"
@@ -56,6 +58,10 @@ class HomeFragment : Fragment() {
         mRecommendAdapter.addItem(ImageCardAdapter.CardStruct(Uri.parse("android.resource://com.eps3rd.pixiv/"+ R.mipmap.test)))
         mRankAdapter.addItem(ImageCardAdapter.CardStruct(Uri.parse("android.resource://com.eps3rd.pixiv/"+ R.mipmap.test)))
         // DEBUG CODE
+    }
+
+    override fun getFragmentTitle(): Int {
+        return R.string.fragment_home
     }
 
 }

@@ -11,4 +11,5 @@
     <string name="fragment_following">FOLLOWING</string>
     <string name="fragment_collection_author">SUBMITTED WORKS</string>
     <string name="fragment_work_detail">DETAIL</string>
+    <string name="fragment_blank">BLANK</string>
 </resources>
