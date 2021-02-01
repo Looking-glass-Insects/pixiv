@@ -10,18 +10,36 @@ class MainActivityPagerAdapter(fragmentManager: FragmentManager, lifecycle: Life
 
     private val mTabFragmentList: MutableList<Fragment> = ArrayList()
     private val  mPageIds : MutableList<Long> = ArrayList()
+    var mFirstFragment: Fragment? = null
 
-
-    fun addItem(fragment: Fragment){
+    fun addItemFirst(fragment: Fragment){
         mTabFragmentList.add(0,fragment)
         mPageIds.add(0,fragment.hashCode().toLong())
         notifyItemInserted(0)
+    }
+
+    fun addItem(fragment: Fragment){
+        if (mTabFragmentList.isEmpty()){
+            mFirstFragment = fragment
+        }
+        mTabFragmentList.add(fragment)
+        mPageIds.add(fragment.hashCode().toLong())
+        notifyItemInserted(mPageIds.size)
     }
 
     fun removeItem(position: Int){
         mTabFragmentList.removeAt(position)
         mPageIds.removeAt(position)
         notifyItemRemoved(position)
+    }
+
+    fun removeToFirst(){
+        var count = mTabFragmentList.indexOf(mFirstFragment)
+        for (i in 0 until count){
+            mTabFragmentList.removeAt(0)
+            mPageIds.removeAt(0)
+        }
+        notifyItemRangeRemoved(0,count)
     }
 
     fun getItem(position: Int): Fragment{

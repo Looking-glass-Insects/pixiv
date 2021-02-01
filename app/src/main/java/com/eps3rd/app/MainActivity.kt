@@ -28,11 +28,12 @@ import com.eps3rd.baselibrary.Constants
 import com.eps3rd.pixiv.GlideCircleBorderTransform
 import com.eps3rd.pixiv.IFragment
 import com.eps3rd.pixiv.fragment.CollectionFragment
-import com.eps3rd.pixiv.fragment.HomeFragment
+import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.tencent.mmkv.MMKV
 import com.eps3rd.pixiv.Constants as PixivConstants
+
 
 @Route(path = Constants.MAIN_ACTIVITY)
 class MainActivity : AppCompatActivity() {
@@ -41,6 +42,9 @@ class MainActivity : AppCompatActivity() {
         private const val TAG = "MainActivity"
         private const val KEY_DRAWER_ITEM = "KEY_DRAWER_ITEM"
         private const val DEFAULT_DRAWER_ITEM = "User,Control,Debug"
+        private const val KEY_DRAWER_CONTROL_SWITCH = "KEY_DRAWER_CONTROL_SWITCH"
+        private const val KEY_DRAWER_CONTROL_ITEM = "KEY_DRAWER_CONTROL_ITEM"
+        private const val DEFAULT_DRAWER_CONTROL_ITEM = "HOME,BLANK"
     }
 
     private lateinit var mDrawerHeader: ImageView
@@ -51,8 +55,15 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mDrawerLayout: DrawerLayout
     private lateinit var mViewPager: ViewPager2
     private lateinit var mViewPagerAdapter: MainActivityPagerAdapter
+    private lateinit var mBottomButtonControlSwitch: SwitchMaterial
+
+
     private var mDrawerItemPrefString: String = DEFAULT_DRAWER_ITEM
+    private var mDrawerControlPrefString: String = DEFAULT_DRAWER_CONTROL_ITEM
+
     private val mDrawerItemAdapter = ExpandListAdapter()
+    private val mControlItemAdapter = ControlItemAdapter()
+
 
     private val mDrawerItemClickListener: View.OnClickListener = View.OnClickListener {
         val fragment: Fragment = when (it.tag) {
@@ -71,7 +82,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        mViewPagerAdapter.addItem(fragment)
+        mViewPagerAdapter.addItemFirst(fragment)
         mDrawerLayout.closeDrawer(Gravity.LEFT)
         mViewPager.post { mViewPager.currentItem = 0 }
 
@@ -95,6 +106,16 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        mViewPager = findViewById<ViewPager2>(R.id.view_pager)
+        mViewPagerAdapter = MainActivityPagerAdapter(
+            supportFragmentManager,
+            lifecycle
+        )
+        mViewPager.adapter = mViewPagerAdapter
+
+
+        loadPreference()
+
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         toolbar.setNavigationIcon(R.drawable.ic_baseline_menu_24)
         setSupportActionBar(toolbar)
@@ -109,41 +130,14 @@ class MainActivity : AppCompatActivity() {
         mDrawerLayout.addDrawerListener(toggle)
         toggle.syncState()
 
-        loadPreference()
-
         setupStatusBar()
         setupDrawer()
-        setupBottom()
-
-        mViewPager = findViewById<ViewPager2>(R.id.view_pager)
-        mViewPagerAdapter = MainActivityPagerAdapter(
-            supportFragmentManager,
-            lifecycle
-        )
-        mViewPager.adapter = mViewPagerAdapter
-
-        try {
-            val fragments =
-                arrayOf(PixivConstants.FRAGMENT_PATH_BLANK, PixivConstants.FRAGMENT_PATH_HOME)
-            val param = Bundle()
-            param.putString("param1", "t1")
-            param.putString("param2", "t2")
-            val params = arrayOf(param, null)
-
-            for ((f, param) in fragments zip params) {
-                val fragment: Fragment =
-                    ARouter.getInstance().build(f)
-                        .with(param)
-                        .navigation() as Fragment
-                mViewPagerAdapter.addItem(fragment)
-            }
-        } catch (e: Exception) {
-            Log.d(TAG, "error to add fragments${Log.getStackTraceString(e)}")
-        }
+        setupBottomAndPager()
 
         val tabLayout = findViewById<TabLayout>(R.id.tab_layout)
         TabLayoutMediator(tabLayout, mViewPager) { tab, position ->
-            tab.text =resources.getString( (mViewPagerAdapter.getItem(position) as IFragment).getFragmentTitle())
+            tab.text =
+                resources.getString((mViewPagerAdapter.getItem(position) as IFragment).getFragmentTitle())
         }.attach()
     }
 
@@ -157,6 +151,18 @@ class MainActivity : AppCompatActivity() {
         mDrawerItemPrefString = builder.toString()
         Log.d(TAG, "onStop:DrawerItemPref $mDrawerItemPrefString")
         kv.encode(KEY_DRAWER_ITEM, mDrawerItemPrefString)
+
+        builder.clear()
+        for (item in mControlItemAdapter.mTagList) {
+            builder.append(item).append(",")
+        }
+        builder.deleteCharAt(builder.lastIndex)
+        mDrawerControlPrefString = builder.toString()
+        Log.d(TAG, "onStop:ControlItemPref $mDrawerControlPrefString")
+        kv.encode(KEY_DRAWER_CONTROL_ITEM, mDrawerControlPrefString)
+
+        kv.encode(KEY_DRAWER_CONTROL_SWITCH, mBottomButtonControlSwitch.isChecked)
+
         super.onStop()
     }
 
@@ -171,7 +177,7 @@ class MainActivity : AppCompatActivity() {
                     .navigation() as Fragment
 
             Log.d(TAG, "onNewIntent:$fragment")
-            mViewPagerAdapter.addItem(fragment)
+            mViewPagerAdapter.addItemFirst(fragment)
             mViewPager.post { mViewPager.currentItem = 0 }
         }
     }
@@ -179,9 +185,12 @@ class MainActivity : AppCompatActivity() {
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             Log.d(TAG, "KEYCODE_BACK")
-            mDrawerLayout.closeDrawer(Gravity.LEFT)
-            if (mViewPagerAdapter.getItem(0) !is HomeFragment) {
-                mViewPagerAdapter.removeItem(0)
+            if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
+                mDrawerLayout.closeDrawer(Gravity.LEFT)
+                return true
+            }
+            if (mViewPagerAdapter.getItem(0) != mViewPagerAdapter.mFirstFragment) {
+                mViewPagerAdapter.removeToFirst()
                 return true
             }
         }
@@ -202,7 +211,7 @@ class MainActivity : AppCompatActivity() {
         val items = mDrawerItemPrefString.split(",")
 
         for (item in items) {
-            mDrawerItemAdapter.addItem(DrawerItemProviderImpl.mMap.get(item)!!)
+            mDrawerItemAdapter.addItem(DrawerItemProvider.mMap.get(item)!!)
         }
 
         mDrawerItemAdapter.mTouchHelper.attachToRecyclerView(mDrawerList)
@@ -220,15 +229,23 @@ class MainActivity : AppCompatActivity() {
             ).into(mUserImage)
     }
 
-    private fun setupBottom() {
-        mBottomArea.addTab(mBottomArea.newTab().setText("test0").setTag("hello"))
-        mBottomArea.addTab(mBottomArea.newTab().setText("test2").setTag("hello2"))
-        mBottomArea.addTab(mBottomArea.newTab().setText("test3").setTag("hello3"))
-        mBottomArea.addTab(mBottomArea.newTab().setText("test4").setTag("hello4"))
+    private fun setupBottomAndPager() {
+        val items = mDrawerControlPrefString.split(",")
+        for (item in items) {
+            DrawerControlProvider.mMap.get(item)!!.apply {
+                mControlItemAdapter.addItem(this)
+                mBottomArea.addTab(mBottomArea.newTab().setText(this.title).setTag(this.tag))
 
+                val fragment: Fragment =
+                    ARouter.getInstance().build(this.fragmentPath)
+                        .navigation() as Fragment
+                mViewPagerAdapter.addItem(fragment)
+
+            }
+        }
         mBottomArea.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabReselected(tab: TabLayout.Tab?) {
-                Log.d(TAG, "onTabReselected:${tab?.tag}")
+                onTabSelected(tab)
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {
@@ -236,22 +253,29 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onTabSelected(tab: TabLayout.Tab?) {
-                Log.d(TAG, "onTabSelected:${tab?.tag}")
+                val selectTo = mControlItemAdapter.mTagList.indexOf(tab!!.tag as String)
+                mViewPagerAdapter.removeToFirst()
+                mViewPager.post { mViewPager.setCurrentItem(selectTo, false) }
             }
         })
     }
 
     private fun loadPreference() {
-        initDrawerItem()
         val kv: MMKV = MMKV.defaultMMKV()!!
-        if (kv.containsKey(KEY_DRAWER_ITEM) == true) {
+        if (kv.containsKey(KEY_DRAWER_ITEM)) {
             mDrawerItemPrefString = kv.decodeString(KEY_DRAWER_ITEM).toString()
             Log.d(TAG, "loadPreference: drawer items:${mDrawerItemPrefString}")
         }
+        if (kv.containsKey(KEY_DRAWER_CONTROL_ITEM)) {
+            mDrawerControlPrefString = kv.decodeString(KEY_DRAWER_CONTROL_ITEM).toString()
+            Log.d(TAG, "loadPreference: control items:${mDrawerControlPrefString}")
+        }
+        initControlItem()
+        initDrawerItem()
     }
 
     private fun initDrawerItem() {
-        DrawerItemProviderImpl.mMap["User"] = object : ExpandListAdapter.ItemStruct {
+        DrawerItemProvider.mMap["User"] = object : ExpandListAdapter.ItemStruct {
             override fun getTitle(): String {
                 return resources.getString(R.string.drawer_item_user)
             }
@@ -279,7 +303,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-        DrawerItemProviderImpl.mMap["Control"] = object : ExpandListAdapter.ItemStruct {
+        DrawerItemProvider.mMap["Control"] = object : ExpandListAdapter.ItemStruct {
             override fun getTitle(): String {
                 return resources.getString(R.string.drawer_item_control)
             }
@@ -290,7 +314,20 @@ class MainActivity : AppCompatActivity() {
 
             override fun getExpandView(): View? {
                 val container = layoutInflater?.inflate(R.layout.item_expand_control, null)
+                mBottomButtonControlSwitch =
+                    container.findViewById<SwitchMaterial>(R.id.switch_disable_bottom)
 
+                mBottomButtonControlSwitch.setOnCheckedChangeListener { compoundButton: CompoundButton, isChecked: Boolean ->
+                    mBottomButton.visibility = if (isChecked) View.GONE else View.VISIBLE
+                }
+                val kv: MMKV = MMKV.defaultMMKV()!!
+                mBottomButtonControlSwitch.isChecked = kv.decodeBool(KEY_DRAWER_CONTROL_SWITCH)
+
+                container.findViewById<RecyclerView>(R.id.rv_fragment_sort).apply {
+                    this.adapter = mControlItemAdapter
+                    mControlItemAdapter.mTouchHelper.attachToRecyclerView(this)
+                    this.layoutManager = LinearLayoutManager(context)
+                }
                 return container
             }
 
@@ -298,8 +335,7 @@ class MainActivity : AppCompatActivity() {
                 return null
             }
         }
-
-        DrawerItemProviderImpl.mMap["Debug"] = object : ExpandListAdapter.ItemStruct {
+        DrawerItemProvider.mMap["Debug"] = object : ExpandListAdapter.ItemStruct {
             override fun getTitle(): String {
                 return resources.getString(R.string.drawer_item_debug)
             }
@@ -322,6 +358,20 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun initControlItem() {
+        DrawerControlProvider.mMap["HOME"] =
+            ControlItemAdapter.ControlItem(resources.getString(R.string.fragment_home))
+                .apply {
+                    tag = "HOME"
+                    fragmentPath = com.eps3rd.pixiv.Constants.FRAGMENT_PATH_HOME
+                }
+        DrawerControlProvider.mMap["BLANK"] =
+            ControlItemAdapter.ControlItem(resources.getString(R.string.fragment_blank))
+                .apply {
+                    tag = "BLANK"
+                    fragmentPath = com.eps3rd.pixiv.Constants.FRAGMENT_PATH_BLANK
+                }
+    }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -334,17 +384,13 @@ class MainActivity : AppCompatActivity() {
         var userName: String = ""
     }
 
-    interface DrawerItemProvider {
-        fun getDrawerItemByTitle(title: String): ExpandListAdapter.ItemStruct
-    }
-
-
-    private object DrawerItemProviderImpl : DrawerItemProvider {
+    private object DrawerItemProvider {
         val mMap = HashMap<String, ExpandListAdapter.ItemStruct>()
-
-        override fun getDrawerItemByTitle(title: String): ExpandListAdapter.ItemStruct {
-            return mMap[title]!!
-        }
     }
+
+    private object DrawerControlProvider {
+        val mMap = HashMap<String, ControlItemAdapter.ControlItem>()
+    }
+
 
 }

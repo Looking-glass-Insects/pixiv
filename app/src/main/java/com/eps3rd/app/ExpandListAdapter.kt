@@ -33,16 +33,14 @@ class ExpandListAdapter : BaseDragAdapter<ExpandListAdapter.VH, ExpandListAdapte
         mItems[position].getExpandView()?.let {
             holder.mContainer.addView(it)
         }
-        mItems[position].getSwitchListener()?.let {
-            holder.addSwitchAction(it)
-        }
+        holder.addSwitchAction(mItems[position].getSwitchListener())
     }
 
     class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var mTitleView: TextView = itemView.findViewById(R.id.tv_expand_title)
         var mContainer: ViewGroup = itemView.findViewById(R.id.container_expand_list)
         var mSwitch: SwitchMaterial = itemView.findViewById(R.id.switch_expand_item)
-        private var mExpanded: Boolean = false
+        var mExpanded: Boolean = false
             set(value) {
                 field = value
                 Log.d(TAG, "set mExpanded:$mExpanded")
@@ -64,14 +62,16 @@ class ExpandListAdapter : BaseDragAdapter<ExpandListAdapter.VH, ExpandListAdapte
         var mEnableSwitch = false
             set(value) {
                 field = value
-                mSwitch.visibility = if (mEnableSwitch) View.VISIBLE else View.GONE
+                mSwitch.visibility = if (mEnableSwitch) View.VISIBLE else View.INVISIBLE
             }
 
         fun addSwitchAction(listener: CompoundButton.OnCheckedChangeListener?) {
             if (listener != null) {
                 mEnableSwitch = true
+                mSwitch.setOnCheckedChangeListener(listener)
+            }else {
+                mEnableSwitch = false
             }
-            mSwitch.setOnCheckedChangeListener(listener)
         }
 
         init {
