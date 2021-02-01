@@ -10,13 +10,17 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ItemTouchHelper.Callback
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.switchmaterial.SwitchMaterial
+import java.util.*
+import kotlin.collections.ArrayList
 
-class ExpandListAdapter : RecyclerView.Adapter<ExpandListAdapter.VH>()  {
-    companion object{
+class ExpandListAdapter : RecyclerView.Adapter<ExpandListAdapter.VH>() {
+    companion object {
         const val TAG = "ExpandListAdapter"
     }
 
     private val mItems: MutableList<ItemStruct> = ArrayList()
+    val mTitleTagList: MutableList<String> = ArrayList()
+
     val mTouchHelper = ItemTouchHelper(object : Callback() {
         override fun getMovementFlags(
             recyclerView: RecyclerView,
@@ -37,6 +41,7 @@ class ExpandListAdapter : RecyclerView.Adapter<ExpandListAdapter.VH>()  {
             if (to == from) {
                 return true
             }
+            Collections.swap(mTitleTagList, from, to)
             notifyItemMoved(from, to)
             return true
         }
@@ -48,8 +53,9 @@ class ExpandListAdapter : RecyclerView.Adapter<ExpandListAdapter.VH>()  {
     })
 
 
-    fun addItem(item: ItemStruct){
+    fun addItem(item: ItemStruct) {
         mItems.add(item)
+        mTitleTagList.add(item.getItemTag())
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
@@ -73,20 +79,20 @@ class ExpandListAdapter : RecyclerView.Adapter<ExpandListAdapter.VH>()  {
     }
 
     class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {
-         var mTitleView: TextView = itemView.findViewById(R.id.tv_expand_title)
-         var mContainer: ViewGroup = itemView.findViewById(R.id.container_expand_list)
-         var mSwitch: SwitchMaterial = itemView.findViewById(R.id.switch_expand_item)
-         private var mExpanded: Boolean = false
+        var mTitleView: TextView = itemView.findViewById(R.id.tv_expand_title)
+        var mContainer: ViewGroup = itemView.findViewById(R.id.container_expand_list)
+        var mSwitch: SwitchMaterial = itemView.findViewById(R.id.switch_expand_item)
+        private var mExpanded: Boolean = false
             set(value) {
                 field = value
                 Log.d(TAG, "set mExpanded:$mExpanded")
-                if(mExpanded){
+                if (mExpanded) {
                     mContainer
                         .animate()
                         .alpha(1f)
                         .withEndAction { mContainer.visibility = View.VISIBLE }
                         .start()
-                }else{
+                } else {
                     mContainer
                         .animate()
                         .alpha(0f)
@@ -95,13 +101,13 @@ class ExpandListAdapter : RecyclerView.Adapter<ExpandListAdapter.VH>()  {
                 }
             }
 
-         var mEnableSwitch = false
+        var mEnableSwitch = false
             set(value) {
                 field = value
                 mSwitch.visibility = if (mEnableSwitch) View.VISIBLE else View.GONE
             }
 
-        fun addSwitchAction(listener: CompoundButton.OnCheckedChangeListener?){
+        fun addSwitchAction(listener: CompoundButton.OnCheckedChangeListener?) {
             if (listener != null) {
                 mEnableSwitch = true
             }
@@ -110,16 +116,17 @@ class ExpandListAdapter : RecyclerView.Adapter<ExpandListAdapter.VH>()  {
 
         init {
             itemView.setOnClickListener {
-                Log.d(TAG,"click")
+                Log.d(TAG, "click")
                 mExpanded = !mExpanded
             }
         }
     }
 
-    interface ItemStruct{
+    interface ItemStruct {
         fun getTitle(): String
+        fun getItemTag(): String
         fun getExpandView(): View?
-        fun getSwitchListener(): CompoundButton.OnCheckedChangeListener?{
+        fun getSwitchListener(): CompoundButton.OnCheckedChangeListener? {
             return null
         }
     }

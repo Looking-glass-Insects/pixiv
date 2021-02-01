@@ -3,18 +3,19 @@ package com.eps3rd.app
 import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.google.android.material.appbar.AppBarLayout
 
 class BottomAreaBehavior : CoordinatorLayout.Behavior<View> {
 
-    companion object{
+    companion object {
         const val TAG = "BottomAreaBehavior"
         var mAnim = false
 
-        fun hide(view:View){
-            if (view.visibility == View.GONE || mAnim)return
+        fun hide(view: View) {
+            if (view.visibility == View.GONE || mAnim) return
             view.animate()
                 .alpha(0f)
                 .translationY(80f)
@@ -28,8 +29,8 @@ class BottomAreaBehavior : CoordinatorLayout.Behavior<View> {
                 .start()
         }
 
-        fun show(view:View){
-            if (view.visibility == View.VISIBLE || mAnim)return
+        fun show(view: View) {
+            if (view.visibility == View.VISIBLE || mAnim) return
             view.animate()
                 .alpha(1f)
                 .translationY(0f)
@@ -59,6 +60,19 @@ class BottomAreaBehavior : CoordinatorLayout.Behavior<View> {
         return !mAnim
     }
 
+    override fun onInterceptTouchEvent(
+        parent: CoordinatorLayout,
+        child: View,
+        ev: MotionEvent
+    ): Boolean {
+        if (ev.action == MotionEvent.ACTION_DOWN && ev.y > child.top) {
+            if (child.visibility == View.GONE) {
+                show(child)
+            }
+        }
+        return false
+    }
+
     override fun onNestedScroll(
         coordinatorLayout: CoordinatorLayout,
         child: View,
@@ -70,7 +84,7 @@ class BottomAreaBehavior : CoordinatorLayout.Behavior<View> {
         type: Int,
         consumed: IntArray
     ) {
-        if (dyConsumed > 0 || dyUnconsumed > 0){
+        if (dyConsumed > 0 || dyUnconsumed > 0) {
             hide(child)
         }
     }
@@ -88,16 +102,16 @@ class BottomAreaBehavior : CoordinatorLayout.Behavior<View> {
         child: View,
         dependency: View
     ): Boolean {
-        if (mY == -1f){
+        if (mY == -1f) {
             mY = dependency.y
             return false
         }
 
-        if (mY > dependency.y){ // up
-            Log.d(TAG,"UP")
+        if (mY > dependency.y) { // up
+            Log.d(TAG, "UP")
             hide(child)
-        }else if (mY < dependency.y) {
-            Log.d(TAG,"DOWN")
+        } else if (mY < dependency.y) {
+            Log.d(TAG, "DOWN")
             show(child)
         }
         mY = dependency.y

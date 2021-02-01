@@ -29,4 +29,11 @@
     <string name="behavior_bottom_area">com.eps3rd.app.BottomAreaBehavior</string>
     <string name="behavior_bottom_button">com.eps3rd.app.BottomButtonBehavior</string>
     <string name="drawer_collapse_behavior">com.eps3rd.app.DrawerCollapseBehavior</string>
+
+<!--    Drawer Items-->
+    <string name="drawer_item_debug">Debug</string>
+    <string name="drawer_item_user">User</string>
+
+
+
 </resources>

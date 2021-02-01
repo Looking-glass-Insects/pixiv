@@ -35,16 +35,19 @@
         android:layout_width="?attr/actionBarSize"
         android:layout_height="?attr/actionBarSize"
         android:background="@drawable/bg_bottom_button"
-        android:layout_marginBottom="?attr/actionBarSize"
+        android:alpha="0.7"
+        android:layout_marginBottom="48dp"
         android:layout_gravity="bottom|right"
         app:layout_behavior="@string/behavior_bottom_button"/>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <com.google.android.material.tabs.TabLayout
         android:id="@+id/main_bottom"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:background="@color/debug_500"
+        android:elevation="0dp"
+        app:tabIndicatorColor="@null"
+        app:tabSelectedTextColor="@color/black"
         app:layout_behavior="@string/behavior_bottom_area"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
