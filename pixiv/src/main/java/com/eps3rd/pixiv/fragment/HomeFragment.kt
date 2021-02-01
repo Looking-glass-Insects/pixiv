@@ -52,8 +52,10 @@ class HomeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        // DEBUG CODE
         mRecommendAdapter.addItem(ImageCardAdapter.CardStruct(Uri.parse("android.resource://com.eps3rd.pixiv/"+ R.mipmap.test)))
         mRankAdapter.addItem(ImageCardAdapter.CardStruct(Uri.parse("android.resource://com.eps3rd.pixiv/"+ R.mipmap.test)))
+        // DEBUG CODE
     }
 
 }

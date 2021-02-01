@@ -41,6 +41,7 @@ class FollowingFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        // DEBUG CODE
         val items = ArrayList<AuthorIntroAdapter.AuthorStruct>()
         items.add(AuthorIntroAdapter.AuthorStruct(DEBUG_URI2).apply{
             this.authorName = "t1"
@@ -55,6 +56,7 @@ class FollowingFragment : Fragment() {
             this.imgUris.add(DEBUG_URI)
         })
         mAdapter.addItems(items)
+        // DEBUG CODE
     }
 
 }

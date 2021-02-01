@@ -26,6 +26,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.eps3rd.baselibrary.Constants
 import com.eps3rd.pixiv.GlideCircleBorderTransform
+import com.eps3rd.pixiv.fragment.CollectionFragment
 import com.eps3rd.pixiv.fragment.HomeFragment
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -56,6 +57,7 @@ class MainActivity : AppCompatActivity() {
         val fragment: Fragment = when (it.tag) {
             DrawerItemTAG.ITEM_COLLECTION -> {
                 ARouter.getInstance().build(PixivConstants.FRAGMENT_PATH_COLLECTION)
+                    .withString(CollectionFragment.TYPE, CollectionFragment.TYPE_COLLECTION)
                     .navigation() as Fragment
             }
 
@@ -158,13 +160,15 @@ class MainActivity : AppCompatActivity() {
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        Log.d(TAG, "onNewIntent")
         intent?.let {
-            val f = it.getStringExtra(Constants.MAIN_ACTIVITY_REQUEST) ?: return
+            val f = it.getBundleExtra(Constants.MAIN_ACTIVITY_REQUEST) ?: return
             val fragment: Fragment =
                 ARouter.getInstance()
-                    .build(f)
+                    .build(f.getString(Constants.MAIN_ACTIVITY_START_FRAGMENT))
+                    .with(f.getBundle(Constants.MAIN_ACTIVITY_START_FRAGMENT_PARAM))
                     .navigation() as Fragment
+
+            Log.d(TAG,"onNewIntent:$fragment")
             mViewPagerAdapter.addItem(fragment)
             mViewPager.post { mViewPager.currentItem = 0 }
         }
