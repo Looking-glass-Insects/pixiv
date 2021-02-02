@@ -21,7 +21,7 @@
         android:background="@color/design_default_background">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/constraintLayout"
+            android:id="@+id/drawer_header_container"
             android:layout_width="match_parent"
             android:layout_height="@dimen/drawer_user_bar_size">
 

@@ -6,10 +6,7 @@ import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.view.Gravity
-import android.view.KeyEvent
-import android.view.Menu
-import android.view.View
+import android.view.*
 import android.widget.CompoundButton
 import android.widget.ImageView
 import android.widget.TextView
@@ -51,6 +48,7 @@ class MainActivity : AppCompatActivity() {
         private const val DEFAULT_DRAWER_ITEM_EXPAND = "true,true,true"
     }
 
+    private lateinit var mDrawerHeaderContainer: ViewGroup
     private lateinit var mDrawerHeader: ImageView
     private lateinit var mDrawerList: RecyclerView
     private lateinit var mUserImage: ImageView
@@ -96,6 +94,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        mDrawerHeaderContainer = findViewById<ViewGroup>(R.id.drawer_header_container)
         mDrawerHeader = findViewById(R.id.drawer_header)
         mDrawerList = findViewById(R.id.drawer_list)
         mUserImage = findViewById(R.id.drawer_user_img)
@@ -108,6 +108,9 @@ class MainActivity : AppCompatActivity() {
             } else {
                 BottomAreaBehavior.hide(mBottomArea)
             }
+        }
+        mDrawerHeaderContainer.setOnClickListener {
+            startActivity(Intent(this@MainActivity,SplashActivity::class.java))
         }
 
         mViewPager = findViewById<ViewPager2>(R.id.view_pager)
@@ -147,7 +150,7 @@ class MainActivity : AppCompatActivity() {
         Log.d(TAG,"onCreate()")
     }
 
-    override fun onStop() {
+    override fun onDestroy() {
         val kv: MMKV = MMKV.defaultMMKV()!!
         val builder = StringBuilder()
         for (item in mDrawerItemAdapter.mTagList) {
@@ -181,9 +184,21 @@ class MainActivity : AppCompatActivity() {
 
         builder.deleteCharAt(builder.lastIndex)
         val mDrawerItemExpandString = builder.toString()
-        Log.d(TAG, "onStop:$mDrawerItemPrefString,$mDrawerControlPrefString,$mDrawerItemExpandString")
+        Log.d(TAG, "onDestroy:$mDrawerItemPrefString,$mDrawerControlPrefString,$mDrawerItemExpandString")
         kv.encode(KEY_DRAWER_ITEM_EXPAND, mDrawerItemExpandString)
+        super.onDestroy()
+    }
+
+
+    override fun onStart() {
+        super.onStart()
+        Log.d(TAG,"onStart")
+    }
+
+
+    override fun onStop() {
         super.onStop()
+        Log.d(TAG,"onStop")
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -195,7 +210,6 @@ class MainActivity : AppCompatActivity() {
 
         }
     }
-
 
 
     override fun onNewIntent(intent: Intent?) {
