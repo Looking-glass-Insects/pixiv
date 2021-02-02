@@ -11,7 +11,7 @@ abstract class BaseDragAdapter<VH: RecyclerView.ViewHolder,ItemType : BaseDragAd
 
     val mTagList: MutableList<String> = ArrayList()
 
-    val mTouchHelper = ItemTouchHelper(object : ItemTouchHelper.Callback() {
+    open var mTouchHelper = ItemTouchHelper(object : ItemTouchHelper.Callback() {
         override fun getMovementFlags(
             recyclerView: RecyclerView,
             viewHolder: RecyclerView.ViewHolder

@@ -18,6 +18,9 @@ class ExpandListAdapter : BaseDragAdapter<ExpandListAdapter.VH, ExpandListAdapte
         const val TAG = "ExpandListAdapter"
     }
 
+    var mExpandPrefString: List<String>? = null
+
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
         val v =
             LayoutInflater.from(parent.context).inflate(R.layout.item_expand_list, parent, false)
@@ -30,6 +33,9 @@ class ExpandListAdapter : BaseDragAdapter<ExpandListAdapter.VH, ExpandListAdapte
 
     override fun onBindViewHolder(holder: VH, position: Int) {
         holder.mTitleView.text = mItems[position].getTitle()
+        mExpandPrefString?.let {
+            holder.mExpanded = it[position] == "true"
+        }
         mItems[position].getExpandView()?.let {
             holder.mContainer.addView(it)
         }
@@ -40,7 +46,7 @@ class ExpandListAdapter : BaseDragAdapter<ExpandListAdapter.VH, ExpandListAdapte
         var mTitleView: TextView = itemView.findViewById(R.id.tv_expand_title)
         var mContainer: ViewGroup = itemView.findViewById(R.id.container_expand_list)
         var mSwitch: SwitchMaterial = itemView.findViewById(R.id.switch_expand_item)
-        var mExpanded: Boolean = false
+        var mExpanded: Boolean = true
             set(value) {
                 field = value
                 Log.d(TAG, "set mExpanded:$mExpanded")
@@ -59,7 +65,7 @@ class ExpandListAdapter : BaseDragAdapter<ExpandListAdapter.VH, ExpandListAdapte
                 }
             }
 
-        var mEnableSwitch = false
+        var mEnableSwitch = true
             set(value) {
                 field = value
                 mSwitch.visibility = if (mEnableSwitch) View.VISIBLE else View.INVISIBLE
