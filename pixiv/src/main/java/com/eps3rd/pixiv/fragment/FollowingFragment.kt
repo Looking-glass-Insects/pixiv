@@ -1,8 +1,8 @@
 package com.eps3rd.pixiv.fragment
 
-import android.content.res.Resources
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +14,8 @@ import com.eps3rd.pixiv.Constants
 import com.eps3rd.app.R
 import com.eps3rd.pixiv.AuthorIntroAdapter
 import com.eps3rd.pixiv.IFragment
+import com.google.android.material.chip.ChipGroup
+import java.lang.IllegalStateException
 
 
 @Route(path = Constants.FRAGMENT_PATH_FOLLOWING)
@@ -27,7 +29,9 @@ class FollowingFragment : Fragment(), IFragment {
 
 
     private lateinit var mRvFollow: RecyclerView
-    private val mAdapter: AuthorIntroAdapter = AuthorIntroAdapter()
+    private val mPublicAdapter: AuthorIntroAdapter = AuthorIntroAdapter()
+    private val mPrivateAdapter: AuthorIntroAdapter = AuthorIntroAdapter()
+    private lateinit var mChipGroup: ChipGroup
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,8 +39,22 @@ class FollowingFragment : Fragment(), IFragment {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_following, container, false)
         mRvFollow = view.findViewById(R.id.rv_following)
+        mChipGroup = view.findViewById(R.id.chipGroup)
+        mChipGroup.setOnCheckedChangeListener { group, checkedId ->
+            when(checkedId){
+                R.id.chip_following_public ->{
+                    mRvFollow.adapter = mPublicAdapter
+                }
+                R.id.chip_following_private -> {
+                    mRvFollow.adapter = mPrivateAdapter
+                }
+                else ->{
+                    throw IllegalStateException("error")
+                }
+            }
+        }
         mRvFollow.layoutManager = LinearLayoutManager(context)
-        mRvFollow.adapter = mAdapter
+        mRvFollow.adapter = mPublicAdapter
         return view
     }
 
@@ -50,14 +68,14 @@ class FollowingFragment : Fragment(), IFragment {
             this.imgUris.add(DEBUG_URI2)
             this.imgUris.add(DEBUG_URI)
         })
-
+        mPrivateAdapter.addItems(items)
         items.add(AuthorIntroAdapter.AuthorStruct(DEBUG_URI).apply{
             this.authorName = "tttttttttttttttt2"
             this.imgUris.add(DEBUG_URI)
             this.imgUris.add(DEBUG_URI2)
             this.imgUris.add(DEBUG_URI)
         })
-        mAdapter.addItems(items)
+        mPublicAdapter.addItems(items)
         // DEBUG CODE
     }
 

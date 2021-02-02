@@ -1,8 +1,10 @@
 package com.eps3rd.pixiv.fragment
 
+import android.content.res.Configuration
 import android.content.res.Resources
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -39,6 +41,7 @@ class HomeFragment : Fragment(), IFragment {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        Log.d(TAG,"onCreateView")
         val view = inflater.inflate(R.layout.fragment_home, container, false)
         mRecommendRV = view.findViewById(R.id.rv_recommended)
         mRecommendRV.layoutManager = GridLayoutManager(context,2)
@@ -50,6 +53,16 @@ class HomeFragment : Fragment(), IFragment {
         mRankRv.layoutManager = LinearLayoutManager(context,RecyclerView.HORIZONTAL,false)
         mRankRv.adapter = mRankAdapter
         return view
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        Log.d(TAG,"onConfigurationChanged")
+        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+            mRecommendRV.layoutManager = GridLayoutManager(context,2)
+        }else{
+            mRecommendRV.layoutManager = GridLayoutManager(context,4)
+        }
     }
 
     override fun onResume() {

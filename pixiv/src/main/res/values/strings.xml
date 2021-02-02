@@ -12,4 +12,8 @@
     <string name="fragment_collection_author">SUBMITTED WORKS</string>
     <string name="fragment_work_detail">DETAIL</string>
     <string name="fragment_blank">BLANK</string>
+    <string name="following_public">Public</string>
+    <string name="following_private">Private</string>
+    <string name="follow_btn_follow">Follow</string>
+    <string name="follow_btn_following">Following</string>
 </resources>

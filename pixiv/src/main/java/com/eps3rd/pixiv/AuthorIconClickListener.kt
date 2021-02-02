@@ -7,6 +7,7 @@ import com.eps3rd.baselibrary.Constants
 import com.eps3rd.pixiv.fragment.CollectionFragment
 
 class AuthorIconClickListener: View.OnClickListener {
+
     override fun onClick(v: View?) {
         val b = Bundle()
         b.putString(Constants.MAIN_ACTIVITY_START_FRAGMENT, com.eps3rd.pixiv.Constants.FRAGMENT_PATH_COLLECTION)

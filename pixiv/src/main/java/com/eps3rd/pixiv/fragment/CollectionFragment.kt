@@ -49,12 +49,10 @@ class CollectionFragment : Fragment(), IFragment {
 
     }
 
-
     private lateinit var mCollectionRV: RecyclerView
     private lateinit var mHeader: ViewGroup
     private val mCollectionAdapter = ImageCardAdapter()
     private var mTypeString: String? = null
-
 
     override fun setArguments(args: Bundle?) {
         super.setArguments(args)

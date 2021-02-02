@@ -2,6 +2,7 @@ package com.eps3rd.app
 
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -142,6 +143,8 @@ class MainActivity : AppCompatActivity() {
             tab.text =
                 resources.getString((mViewPagerAdapter.getItem(position) as IFragment).getFragmentTitle())
         }.attach()
+
+        Log.d(TAG,"onCreate()")
     }
 
     override fun onStop() {
@@ -182,6 +185,18 @@ class MainActivity : AppCompatActivity() {
         kv.encode(KEY_DRAWER_ITEM_EXPAND, mDrawerItemExpandString)
         super.onStop()
     }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        Log.d(TAG,"onConfigurationChanged")
+        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+
+        }else{
+
+        }
+    }
+
+
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)

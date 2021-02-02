@@ -12,6 +12,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.eps3rd.app.R
+import com.google.android.material.chip.Chip
 
 class AuthorIntroAdapter : RecyclerView.Adapter<AuthorIntroAdapter.AuthorVH>() {
 
@@ -57,7 +58,7 @@ class AuthorIntroAdapter : RecyclerView.Adapter<AuthorIntroAdapter.AuthorVH>() {
         private var mImages: MutableList<ImageView> = ArrayList(3)
         private var mAuthorIcon: ImageView
         private var mAuthorName: TextView
-        private var mFollowButton: TextView
+        private var mFollowButton: Chip
         private var mImageClickListener = ImageCardClickListener()
         private var mAuthorIconClickListener = AuthorIconClickListener()
 
@@ -79,8 +80,12 @@ class AuthorIntroAdapter : RecyclerView.Adapter<AuthorIntroAdapter.AuthorVH>() {
             mAuthorName = rootView.findViewById(R.id.author_name)
             mFollowButton = rootView.findViewById(R.id.follow_btn)
 
-            mFollowButton.setOnClickListener {
-                Log.d(TAG, "click mFollowButton")
+            mFollowButton.setOnCheckedChangeListener { buttonView, isChecked ->
+                if (isChecked){
+                    mFollowButton.setText(R.string.follow_btn_following)
+                }else{
+                    mFollowButton.setText(R.string.follow_btn_follow)
+                }
             }
         }
 
@@ -118,7 +123,7 @@ class AuthorIntroAdapter : RecyclerView.Adapter<AuthorIntroAdapter.AuthorVH>() {
     data class AuthorStruct(
         var icon: Uri
     ) {
-        var imgUris: MutableList<Uri> = ArrayList(3)
+        var imgUris: MutableList<Uri> = ArrayList(5)
         var authorName: String = "N/A"
     }
 }
