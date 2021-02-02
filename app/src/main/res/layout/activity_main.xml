@@ -23,14 +23,13 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraintLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_behavior="@string/drawer_collapse_behavior">
+            android:layout_height="@dimen/drawer_user_bar_size">
 
             <ImageView
                 android:id="@+id/drawer_header"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/drawer_header_height"
-                android:background="@drawable/ic_launcher_foreground"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_drawer_item"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -40,15 +39,17 @@
                 android:layout_height="@dimen/drawer_user_img_size"
                 android:layout_marginStart="@dimen/drawer_item_margin"
                 app:layout_constraintBottom_toBottomOf="@+id/drawer_header"
+                app:layout_constraintTop_toTopOf="@+id/drawer_header"
                 app:layout_constraintStart_toStartOf="@+id/drawer_header" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.core.widget.NestedScrollView
             android:id="@+id/nestedScrollView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:translationY="@dimen/drawer_header_height">
-
+            android:layout_height="match_parent"
+            android:paddingTop="@dimen/drawer_item_margin"
+            android:translationY="@dimen/drawer_user_bar_size"
+            android:paddingBottom="@dimen/drawer_user_bar_size">
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/drawer_list"
                 android:layout_width="match_parent"

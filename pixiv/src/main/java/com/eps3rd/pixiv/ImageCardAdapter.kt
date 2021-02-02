@@ -4,20 +4,17 @@ import android.annotation.SuppressLint
 import android.net.Uri
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AccelerateInterpolator
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.widget.ListPopupWindow
 import androidx.recyclerview.widget.RecyclerView
-import com.alibaba.android.arouter.launcher.ARouter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.eps3rd.app.R
-import com.eps3rd.baselibrary.Constants
 import com.eps3rd.pixiv.ImageCardAdapter.ImageCardVH.Companion.NO_IMG_URI
 
 
@@ -36,6 +33,8 @@ class ImageCardAdapter : RecyclerView.Adapter<ImageCardAdapter.ImageCardVH>() {
     var mShowOverlay: Boolean = true
     var mShowCollection: Boolean = true
     var mMaxCount = DEFAULT_MAX_COUNT
+    val mClickListener = ImageCardClickListener()
+
 
     fun addItem(item: CardStruct) {
         if (mImageItems.size >= mMaxCount)
@@ -46,11 +45,13 @@ class ImageCardAdapter : RecyclerView.Adapter<ImageCardAdapter.ImageCardVH>() {
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageCardVH {
-        return ImageCardVH(
+        val vh = ImageCardVH(
             LayoutInflater.from(
                 parent.context
             ).inflate(R.layout.item_img, parent, false)
         )
+        vh.setListener(mClickListener)
+        return vh
     }
 
 
@@ -64,6 +65,7 @@ class ImageCardAdapter : RecyclerView.Adapter<ImageCardAdapter.ImageCardVH>() {
         holder.setImage(item.imgUri)
         holder.mShowAuthor = mShowAuthor
         holder.mShowOverlay = mShowOverlay
+
         if (!mShowCollection)
             holder.mCollectionButton.visibility = View.GONE
     }
@@ -77,6 +79,7 @@ class ImageCardAdapter : RecyclerView.Adapter<ImageCardAdapter.ImageCardVH>() {
                 Uri.parse("android.resource://com.eps3rd.pixiv/" + R.drawable.ic_round_image_24)
         }
 
+        private var mRootView: View
         private var mImageView: ImageView
         private var mOverlay: ViewGroup
         private var mImageCount: TextView
@@ -84,6 +87,7 @@ class ImageCardAdapter : RecyclerView.Adapter<ImageCardAdapter.ImageCardVH>() {
         private var mAuthorName: TextView
         private var mAuthorIcon: ImageView
         var mCollectionButton: ImageView
+        var mTag: Any? = null
 
         private val cardStruct: CardStruct = CardStruct(NO_IMG_URI)
 
@@ -102,6 +106,7 @@ class ImageCardAdapter : RecyclerView.Adapter<ImageCardAdapter.ImageCardVH>() {
             }
 
         init {
+            mRootView = rootView
             mImageView = rootView.findViewById(R.id.iv_img)
             mCollectionButton = rootView.findViewById(R.id.iv_collection)
             mOverlay = rootView.findViewById(R.id.container_overlay)
@@ -110,7 +115,8 @@ class ImageCardAdapter : RecyclerView.Adapter<ImageCardAdapter.ImageCardVH>() {
             mAuthorName = rootView.findViewById(R.id.author_name)
             mAuthorIcon = rootView.findViewById(R.id.author_small_icon)
 
-            rootView.setOnClickListener(ImageCardClickListener())
+            val listener = ImageCardClickListener()
+
 
             mCollectionButton.setOnClickListener {
                 mCollected = mCollectionCallback?.isCollected(cardStruct.imgUri) ?: false
@@ -171,6 +177,11 @@ class ImageCardAdapter : RecyclerView.Adapter<ImageCardAdapter.ImageCardVH>() {
                 .error(R.drawable.ic_round_broken_image_24)
                 .transform(CenterCrop())
                 .into(mImageView)
+        }
+
+        fun setListener(listener: ImageCardClickListener) {
+            mRootView.setOnLongClickListener(listener)
+            mRootView.setOnClickListener(listener)
         }
 
         fun setAuthorAndTitle(iconUri: Uri, name: String, title: String) {

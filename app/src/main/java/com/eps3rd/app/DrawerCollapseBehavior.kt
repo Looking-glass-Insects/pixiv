@@ -1,20 +1,16 @@
 package com.eps3rd.app
 
 import android.content.Context
-import android.os.Build
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
-import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import kotlin.properties.Delegates
 
 class DrawerCollapseBehavior : CoordinatorLayout.Behavior<View> {
     constructor() : super()
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs) {
         mCollapsedSize =
-            context?.resources?.getDimensionPixelSize(R.dimen.drawer_user_img_size) ?: 0
+            context?.resources?.getDimensionPixelSize(R.dimen.drawer_user_bar_size) ?: 0
     }
 
     private var mCollapsedSize: Int = 0

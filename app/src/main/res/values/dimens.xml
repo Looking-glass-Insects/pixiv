@@ -11,7 +11,8 @@
     <dimen name="drawer_item_padding">5dp</dimen>
     <dimen name="drawer_item_margin">5dp</dimen>
     <dimen name="drawer_header_height">200dp</dimen>
-    <dimen name="drawer_user_img_size">56dp</dimen>
+    <dimen name="drawer_user_bar_size">56dp</dimen>
+    <dimen name="drawer_user_img_size">40dp</dimen>
     <dimen name="drawer_user_img_before_collapse_size">80dp</dimen>
     <dimen name="drawer_expand_icon_size">20dp</dimen>
     <dimen name="drawer_item_icon_size">15dp</dimen>
