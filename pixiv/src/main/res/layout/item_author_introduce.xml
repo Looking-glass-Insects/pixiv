@@ -79,4 +79,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/img_1"
         app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <ImageView
+        android:visibility="gone"
+        android:id="@+id/author_bg_img"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/author_imgs"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:constraint_referenced_ids="img_1,img_2,img_3"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

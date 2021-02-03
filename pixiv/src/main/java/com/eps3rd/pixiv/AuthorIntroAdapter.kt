@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.constraintlayout.widget.Group
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
@@ -61,6 +62,8 @@ class AuthorIntroAdapter : RecyclerView.Adapter<AuthorIntroAdapter.AuthorVH>() {
         private var mFollowButton: Chip
         private var mImageClickListener = ImageCardClickListener()
         private var mAuthorIconClickListener = AuthorIconClickListener()
+        private var mImgGroup: Group
+
 
         val mStruct : AuthorStruct = AuthorStruct(ImageCardAdapter.ImageCardVH.NO_IMG_URI)
 
@@ -79,6 +82,8 @@ class AuthorIntroAdapter : RecyclerView.Adapter<AuthorIntroAdapter.AuthorVH>() {
             }
             mAuthorName = rootView.findViewById(R.id.author_name)
             mFollowButton = rootView.findViewById(R.id.follow_btn)
+
+            mImgGroup = rootView.findViewById(R.id.author_imgs)
 
             mFollowButton.setOnCheckedChangeListener { buttonView, isChecked ->
                 if (isChecked){
@@ -115,6 +120,10 @@ class AuthorIntroAdapter : RecyclerView.Adapter<AuthorIntroAdapter.AuthorVH>() {
                 Log.d(TAG,"img$i:${uri}")
                 loadImg(mImages[i], uri)
             }
+        }
+
+        fun hideImages(){
+            mImgGroup.visibility = View.GONE
         }
 
     }

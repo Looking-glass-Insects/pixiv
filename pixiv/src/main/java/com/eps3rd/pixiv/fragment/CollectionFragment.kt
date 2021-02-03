@@ -10,12 +10,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
 import android.widget.ImageView
+import androidx.constraintlayout.widget.Group
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.bumptech.glide.Glide
 import com.eps3rd.pixiv.Constants
 import com.eps3rd.app.R
+import com.eps3rd.pixiv.AuthorIntroAdapter
 import com.eps3rd.pixiv.IFragment
 import com.eps3rd.pixiv.ImageCardAdapter
 import com.google.android.material.chip.Chip
@@ -83,7 +85,10 @@ class CollectionFragment : Fragment(), IFragment {
                 mHeader.addView(viewGroup)
             }
             TYPE_AUTHOR_WORKS -> {
-
+                val viewGroup  = inflater.inflate(R.layout.item_author_introduce, null, false)
+                val vh = AuthorIntroAdapter.AuthorVH(viewGroup)
+                vh.hideImages()
+                mHeader.addView(viewGroup)
             }
             else -> {
                 throw IllegalStateException("collection fragment no type")
