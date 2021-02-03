@@ -24,12 +24,16 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.eps3rd.baselibrary.Constants
 import com.eps3rd.pixiv.GlideCircleBorderTransform
+import com.eps3rd.pixiv.GlideSettingsModule
 import com.eps3rd.pixiv.IFragment
 import com.eps3rd.pixiv.fragment.CollectionFragment
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.tencent.mmkv.MMKV
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.lang.Exception
 import com.eps3rd.pixiv.Constants as PixivConstants
 
@@ -40,12 +44,12 @@ class MainActivity : AppCompatActivity() {
     companion object {
         private const val TAG = "eps3rd->MainActivity"
         private const val KEY_DRAWER_ITEM = "KEY_DRAWER_ITEM"
-        private const val DEFAULT_DRAWER_ITEM = "User,Control,Debug"
-        private const val KEY_DRAWER_CONTROL_SWITCH = "KEY_DRAWER_CONTROL_SWITCH"
+        private const val DEFAULT_DRAWER_ITEM = "User,Control,Cache,Debug"
+        private const val KEY_DRAWER_CONTROL_SWITCH_BOTTOM = "KEY_DRAWER_CONTROL_SWITCH_BOTTOM"
+        private const val KEY_DRAWER_CONTROL_SWITCH_TOP = "KEY_DRAWER_CONTROL_SWITCH_TOP"
         private const val KEY_DRAWER_CONTROL_ITEM = "KEY_DRAWER_CONTROL_ITEM"
         private const val KEY_DRAWER_ITEM_EXPAND = "KEY_DRAWER_ITEM_EXPAND"
         private const val DEFAULT_DRAWER_CONTROL_ITEM = "HOME,BLANK"
-        private const val DEFAULT_DRAWER_ITEM_EXPAND = "true,true,true"
     }
 
     private lateinit var mDrawerHeaderContainer: ViewGroup
@@ -57,7 +61,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mDrawerLayout: DrawerLayout
     private lateinit var mViewPager: ViewPager2
     private lateinit var mViewPagerAdapter: MainActivityPagerAdapter
+    private lateinit  var mTabLayout: TabLayout
     private var mBottomButtonControlSwitch: SwitchMaterial? = null
+    private var mTopButtonControlSwitch: SwitchMaterial? = null
 
 
     private var mDrawerItemPrefString: String = DEFAULT_DRAWER_ITEM
@@ -65,7 +71,6 @@ class MainActivity : AppCompatActivity() {
 
     private val mDrawerItemAdapter = ExpandListAdapter()
     private val mControlItemAdapter = ControlItemAdapter()
-
 
     private val mDrawerItemClickListener: View.OnClickListener = View.OnClickListener {
         val fragment: Fragment = when (it.tag) {
@@ -101,6 +106,8 @@ class MainActivity : AppCompatActivity() {
         mUserImage = findViewById(R.id.drawer_user_img)
         mBottomButton = findViewById(R.id.bottom_button)
         mBottomArea = findViewById(R.id.main_bottom)
+        mTabLayout = findViewById<TabLayout>(R.id.tab_layout)
+
 
         mBottomButton.setOnClickListener {
             if (mBottomArea.visibility == View.GONE) {
@@ -110,7 +117,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
         mDrawerHeaderContainer.setOnClickListener {
-            startActivity(Intent(this@MainActivity,SplashActivity::class.java))
+            startActivity(Intent(this@MainActivity, SplashActivity::class.java))
         }
 
         mViewPager = findViewById<ViewPager2>(R.id.view_pager)
@@ -141,13 +148,13 @@ class MainActivity : AppCompatActivity() {
         setupDrawer()
         setupBottomAndPager()
 
-        val tabLayout = findViewById<TabLayout>(R.id.tab_layout)
-        TabLayoutMediator(tabLayout, mViewPager) { tab, position ->
+
+        TabLayoutMediator(mTabLayout, mViewPager) { tab, position ->
             tab.text =
                 resources.getString((mViewPagerAdapter.getItem(position) as IFragment).getFragmentTitle())
         }.attach()
 
-        Log.d(TAG,"onCreate()")
+        Log.d(TAG, "onCreate()")
     }
 
     override fun onDestroy() {
@@ -169,22 +176,28 @@ class MainActivity : AppCompatActivity() {
         kv.encode(KEY_DRAWER_CONTROL_ITEM, mDrawerControlPrefString)
 
         mBottomButtonControlSwitch?.let {
-            kv.encode(KEY_DRAWER_CONTROL_SWITCH, it.isChecked)
+            kv.encode(KEY_DRAWER_CONTROL_SWITCH_BOTTOM, it.isChecked)
+        }
+        mTopButtonControlSwitch?.let {
+            kv.encode(KEY_DRAWER_CONTROL_SWITCH_TOP, it.isChecked)
         }
 
         try {
             builder.clear()
-            for (i in 0 until mDrawerItemAdapter.itemCount){
+            for (i in 0 until mDrawerItemAdapter.itemCount) {
                 val v = mDrawerList.findViewHolderForAdapterPosition(i) as ExpandListAdapter.VH
                 builder.append(v.mExpanded).append(",")
             }
-        }catch (e: Exception){
-            Log.d(TAG,"drawer list does not have any. ${Log.getStackTraceString(e)}")
+        } catch (e: Exception) {
+            Log.d(TAG, "drawer list does not have any. ${Log.getStackTraceString(e)}")
         }
 
         builder.deleteCharAt(builder.lastIndex)
         val mDrawerItemExpandString = builder.toString()
-        Log.d(TAG, "onDestroy:$mDrawerItemPrefString,$mDrawerControlPrefString,$mDrawerItemExpandString")
+        Log.d(
+            TAG,
+            "onDestroy:$mDrawerItemPrefString,$mDrawerControlPrefString,$mDrawerItemExpandString"
+        )
         kv.encode(KEY_DRAWER_ITEM_EXPAND, mDrawerItemExpandString)
         super.onDestroy()
     }
@@ -192,21 +205,21 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        Log.d(TAG,"onStart")
+        Log.d(TAG, "onStart")
     }
 
 
     override fun onStop() {
         super.onStop()
-        Log.d(TAG,"onStop")
+        Log.d(TAG, "onStop")
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        Log.d(TAG,"onConfigurationChanged")
-        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+        Log.d(TAG, "onConfigurationChanged")
+        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
 
-        }else{
+        } else {
 
         }
     }
@@ -319,8 +332,8 @@ class MainActivity : AppCompatActivity() {
             Log.d(TAG, "loadPreference: control items:${mDrawerControlPrefString}")
         }
 
-        if (kv.containsKey(KEY_DRAWER_ITEM_EXPAND)){
-            val  mDrawerItemExpandString = kv.decodeString(KEY_DRAWER_ITEM_EXPAND).toString()
+        if (kv.containsKey(KEY_DRAWER_ITEM_EXPAND)) {
+            val mDrawerItemExpandString = kv.decodeString(KEY_DRAWER_ITEM_EXPAND).toString()
             val expands = mDrawerItemExpandString.split(",")
             mDrawerItemAdapter.mExpandPrefString = expands
         }
@@ -371,12 +384,20 @@ class MainActivity : AppCompatActivity() {
                 val container = layoutInflater?.inflate(R.layout.item_expand_control, null)
                 mBottomButtonControlSwitch =
                     container.findViewById<SwitchMaterial>(R.id.switch_disable_bottom)
-
                 mBottomButtonControlSwitch?.setOnCheckedChangeListener { compoundButton: CompoundButton, isChecked: Boolean ->
                     mBottomButton.visibility = if (isChecked) View.GONE else View.VISIBLE
                 }
+
+                mTopButtonControlSwitch =
+                    container.findViewById<SwitchMaterial>(R.id.switch_disable_top)
+                mTopButtonControlSwitch?.setOnCheckedChangeListener { compoundButton: CompoundButton, isChecked: Boolean ->
+                    mTabLayout.visibility = if (isChecked) View.GONE else View.VISIBLE
+                }
+
                 val kv: MMKV = MMKV.defaultMMKV()!!
-                mBottomButtonControlSwitch?.isChecked = kv.decodeBool(KEY_DRAWER_CONTROL_SWITCH)
+                mBottomButtonControlSwitch?.isChecked =
+                    kv.decodeBool(KEY_DRAWER_CONTROL_SWITCH_BOTTOM)
+                mTopButtonControlSwitch?.isChecked = kv.decodeBool(KEY_DRAWER_CONTROL_SWITCH_TOP)
 
                 container.findViewById<RecyclerView>(R.id.rv_fragment_sort).apply {
                     this.adapter = mControlItemAdapter
@@ -388,6 +409,41 @@ class MainActivity : AppCompatActivity() {
 
             override fun getSwitchListener(): CompoundButton.OnCheckedChangeListener? {
                 return null
+            }
+        }
+        DrawerItemProvider.mMap["Cache"] = object : ExpandListAdapter.ItemStruct {
+            val tv = TextView(this@MainActivity)
+
+            override fun getTitle(): String {
+                return resources.getString(R.string.drawer_item_cache)
+            }
+
+            override fun getItemTag(): String {
+                return "Cache"
+            }
+
+            override fun getExpandView(): View? {
+                GlobalScope.launch(Dispatchers.Main) {
+                    tv.text = GlideSettingsModule.getCacheSize(application)
+                }
+                return tv
+            }
+
+            override fun getSwitchListener(): CompoundButton.OnCheckedChangeListener? {
+                return CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
+                    if (isChecked) {
+                        buttonView.isEnabled = false
+                        GlobalScope.launch(Dispatchers.Main) {
+                            val success = GlideSettingsModule.clearCacheDiskSelf(application)
+                            if (success) {
+                                buttonView.isChecked = false
+                                buttonView.isEnabled = true
+                                tv.text = GlideSettingsModule.getCacheSize(application)
+                            }
+                            Log.d(TAG, "clear cache:$success")
+                        }
+                    }
+                }
             }
         }
         DrawerItemProvider.mMap["Debug"] = object : ExpandListAdapter.ItemStruct {

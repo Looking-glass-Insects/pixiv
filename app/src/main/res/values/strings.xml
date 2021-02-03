@@ -35,6 +35,8 @@
     <string name="drawer_item_user">User</string>
     <string name="drawer_item_control">Layout Control</string>
     <string name="drawer_item_control_disable_bottom">Disable bottom button</string>
+    <string name="drawer_item_control_disable_top">Disable top tab</string>
     <string name="drawer_item_control_drag">Drag to sort</string>
+    <string name="drawer_item_cache">Clear Cache</string>
 
 </resources>

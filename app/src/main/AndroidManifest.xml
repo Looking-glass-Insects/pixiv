@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.eps3rd.app">
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".PixivApp"
         android:allowBackup="true"
@@ -12,9 +16,9 @@
         android:theme="@style/Theme.Pixiv">
         <activity
             android:name=".MainActivity"
-            android:theme="@style/Theme.Pixiv.NoActionBar"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:launchMode="singleTask">
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.Pixiv.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
