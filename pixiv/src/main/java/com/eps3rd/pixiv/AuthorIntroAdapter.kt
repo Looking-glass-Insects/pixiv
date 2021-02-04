@@ -70,15 +70,19 @@ class AuthorIntroAdapter : RecyclerView.Adapter<AuthorIntroAdapter.AuthorVH>() {
         init {
             mImages.add(rootView.findViewById<ImageView>(R.id.img_1).apply{
                 this.setOnClickListener(mImageClickListener)
+                this.setOnLongClickListener(mImageClickListener)
             })
             mImages.add(rootView.findViewById<ImageView>(R.id.img_2).apply{
                 this.setOnClickListener(mImageClickListener)
+                this.setOnLongClickListener(mImageClickListener)
             })
             mImages.add(rootView.findViewById<ImageView>(R.id.img_3).apply{
                 this.setOnClickListener(mImageClickListener)
+                this.setOnLongClickListener(mImageClickListener)
             })
             mAuthorIcon = rootView.findViewById<ImageView>(R.id.icon).apply {
                 this.setOnClickListener(mAuthorIconClickListener)
+                this.setOnLongClickListener(mImageClickListener)
             }
             mAuthorName = rootView.findViewById(R.id.author_name)
             mFollowButton = rootView.findViewById(R.id.follow_btn)
@@ -102,7 +106,8 @@ class AuthorIntroAdapter : RecyclerView.Adapter<AuthorIntroAdapter.AuthorVH>() {
             }else{
                 CenterCrop()
             }
-            Glide.with(imgView)
+            imgView.tag = uri
+            GlideApp.with(imgView)
                 .load(uri)
                 .placeholder(R.drawable.ic_round_image_search_24)
                 .error(R.drawable.ic_round_broken_image_24)

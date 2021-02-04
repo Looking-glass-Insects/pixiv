@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.widget.ListPopupWindow
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
@@ -45,13 +44,11 @@ class ImageCardAdapter : RecyclerView.Adapter<ImageCardAdapter.ImageCardVH>() {
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageCardVH {
-        val vh = ImageCardVH(
+        return ImageCardVH(
             LayoutInflater.from(
                 parent.context
             ).inflate(R.layout.item_img, parent, false)
         )
-        vh.setListener(mClickListener)
-        return vh
     }
 
 
@@ -65,7 +62,8 @@ class ImageCardAdapter : RecyclerView.Adapter<ImageCardAdapter.ImageCardVH>() {
         holder.setImage(item.imgUri)
         holder.mShowAuthor = mShowAuthor
         holder.mShowOverlay = mShowOverlay
-
+        holder.setTag(item)
+        holder.setListener(mClickListener)
         if (!mShowCollection)
             holder.mCollectionButton.visibility = View.GONE
     }
@@ -87,7 +85,6 @@ class ImageCardAdapter : RecyclerView.Adapter<ImageCardAdapter.ImageCardVH>() {
         private var mAuthorName: TextView
         private var mAuthorIcon: ImageView
         var mCollectionButton: ImageView
-        var mTag: Any? = null
 
         private val cardStruct: CardStruct = CardStruct(NO_IMG_URI)
 
@@ -114,9 +111,6 @@ class ImageCardAdapter : RecyclerView.Adapter<ImageCardAdapter.ImageCardVH>() {
             mImageTitle = rootView.findViewById(R.id.image_title)
             mAuthorName = rootView.findViewById(R.id.author_name)
             mAuthorIcon = rootView.findViewById(R.id.author_small_icon)
-
-            val listener = ImageCardClickListener()
-
 
             mCollectionButton.setOnClickListener {
                 mCollected = mCollectionCallback?.isCollected(cardStruct.imgUri) ?: false
@@ -167,11 +161,11 @@ class ImageCardAdapter : RecyclerView.Adapter<ImageCardAdapter.ImageCardVH>() {
             this.cardStruct.imgUri = uri
 
             mCollected = this.mCollectionCallback?.isCollected(uri) ?: false
-            Glide.with(mCollectionButton)
+            GlideApp.with(mCollectionButton)
                 .load(if (mCollected) R.drawable.ic_round_favorite_24 else R.drawable.ic_round_favorite_border_24)
                 .into(mCollectionButton)
 
-            Glide.with(mImageView)
+            GlideApp.with(mImageView)
                 .load(uri)
                 .placeholder(R.drawable.ic_round_image_search_24)
                 .error(R.drawable.ic_round_broken_image_24)
@@ -182,6 +176,10 @@ class ImageCardAdapter : RecyclerView.Adapter<ImageCardAdapter.ImageCardVH>() {
         fun setListener(listener: ImageCardClickListener) {
             mRootView.setOnLongClickListener(listener)
             mRootView.setOnClickListener(listener)
+        }
+
+        fun setTag(tag: CardStruct){
+            mRootView.tag = tag.imgUri
         }
 
         fun setAuthorAndTitle(iconUri: Uri, name: String, title: String) {

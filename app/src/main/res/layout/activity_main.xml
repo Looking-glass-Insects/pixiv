@@ -42,11 +42,7 @@
                 app:layout_constraintTop_toTopOf="@+id/drawer_header"
                 app:layout_constraintStart_toStartOf="@+id/drawer_header" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-        <com.eps3rd.baselibrary.SpringBackLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:scrollableView="@id/nestedScrollView"
-            app:scrollOrientation ="vertical">
+
         <androidx.core.widget.NestedScrollView
             android:id="@+id/nestedScrollView"
             android:layout_width="match_parent"
@@ -60,7 +56,6 @@
                     android:layout_height="wrap_content" />
 
         </androidx.core.widget.NestedScrollView>
-        </com.eps3rd.baselibrary.SpringBackLayout>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </androidx.drawerlayout.widget.DrawerLayout>
