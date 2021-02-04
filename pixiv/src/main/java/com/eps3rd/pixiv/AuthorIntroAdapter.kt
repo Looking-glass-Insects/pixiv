@@ -1,5 +1,6 @@
 package com.eps3rd.pixiv
 
+import android.media.Image
 import android.net.Uri
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,6 +15,7 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.eps3rd.app.R
 import com.google.android.material.chip.Chip
+import org.w3c.dom.Text
 
 class AuthorIntroAdapter : RecyclerView.Adapter<AuthorIntroAdapter.AuthorVH>() {
 
@@ -24,20 +26,21 @@ class AuthorIntroAdapter : RecyclerView.Adapter<AuthorIntroAdapter.AuthorVH>() {
 
     private val mImageItems = ArrayList<AuthorStruct>()
 
-    fun addItem(item: AuthorStruct){
+    fun addItem(item: AuthorStruct) {
         mImageItems.add(item)
         notifyItemInserted(mImageItems.size)
     }
 
-    fun addItems(items: MutableList<AuthorStruct>){
+    fun addItems(items: MutableList<AuthorStruct>) {
         mImageItems.addAll(items)
-        notifyItemRangeInserted(mImageItems.size,items.size)
+        notifyItemRangeInserted(mImageItems.size, items.size)
     }
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AuthorVH {
         return AuthorVH(
-            LayoutInflater.from(parent.context).inflate(R.layout.item_author_introduce, parent,false)
+            LayoutInflater.from(parent.context)
+                .inflate(R.layout.item_author_introduce, parent, false)
         )
     }
 
@@ -59,24 +62,25 @@ class AuthorIntroAdapter : RecyclerView.Adapter<AuthorIntroAdapter.AuthorVH>() {
         private var mImages: MutableList<ImageView> = ArrayList(3)
         private var mAuthorIcon: ImageView
         private var mAuthorName: TextView
+        private var mAuthorBgImg: ImageView
         private var mFollowButton: Chip
         private var mImageClickListener = ImageCardClickListener()
         private var mAuthorIconClickListener = AuthorIconClickListener()
         private var mImgGroup: Group
 
 
-        val mStruct : AuthorStruct = AuthorStruct(ImageCardAdapter.ImageCardVH.NO_IMG_URI)
+        var mStruct: AuthorStruct = AuthorStruct(ImageCardAdapter.ImageCardVH.NO_IMG_URI)
 
         init {
-            mImages.add(rootView.findViewById<ImageView>(R.id.img_1).apply{
+            mImages.add(rootView.findViewById<ImageView>(R.id.img_1).apply {
                 this.setOnClickListener(mImageClickListener)
                 this.setOnLongClickListener(mImageClickListener)
             })
-            mImages.add(rootView.findViewById<ImageView>(R.id.img_2).apply{
+            mImages.add(rootView.findViewById<ImageView>(R.id.img_2).apply {
                 this.setOnClickListener(mImageClickListener)
                 this.setOnLongClickListener(mImageClickListener)
             })
-            mImages.add(rootView.findViewById<ImageView>(R.id.img_3).apply{
+            mImages.add(rootView.findViewById<ImageView>(R.id.img_3).apply {
                 this.setOnClickListener(mImageClickListener)
                 this.setOnLongClickListener(mImageClickListener)
             })
@@ -87,23 +91,25 @@ class AuthorIntroAdapter : RecyclerView.Adapter<AuthorIntroAdapter.AuthorVH>() {
             mAuthorName = rootView.findViewById(R.id.author_name)
             mFollowButton = rootView.findViewById(R.id.follow_btn)
 
+            mAuthorBgImg = rootView.findViewById(R.id.author_bg_img)
             mImgGroup = rootView.findViewById(R.id.author_imgs)
 
             mFollowButton.setOnCheckedChangeListener { buttonView, isChecked ->
-                if (isChecked){
+                if (isChecked) {
                     mFollowButton.setText(R.string.follow_btn_following)
-                }else{
+                } else {
                     mFollowButton.setText(R.string.follow_btn_follow)
                 }
             }
         }
 
         private fun loadImg(imgView: ImageView, uri: Uri) {
-            val transform = if (imgView.id == R.id.icon){
+            val transform = if (imgView.id == R.id.icon) {
                 GlideCircleBorderTransform(
                     2,
-                    imgView.context.resources.getColor(R.color.black))
-            }else{
+                    imgView.context.resources.getColor(R.color.black)
+                )
+            } else {
                 CenterCrop()
             }
             imgView.tag = uri
@@ -116,21 +122,23 @@ class AuthorIntroAdapter : RecyclerView.Adapter<AuthorIntroAdapter.AuthorVH>() {
         }
 
         fun notifyDataChanged() {
-            Log.d(TAG,"icon:${mStruct.icon}")
-            loadImg(mAuthorIcon,mStruct.icon)
+            Log.d(TAG, "icon:${mStruct.icon}")
+            loadImg(mAuthorIcon, mStruct.icon)
             mAuthorName.text = mStruct.authorName
             for ((i, uri) in mStruct.imgUris.withIndex()) {
                 if (i > 2)
                     return
-                Log.d(TAG,"img$i:${uri}")
+                Log.d(TAG, "img$i:${uri}")
                 loadImg(mImages[i], uri)
+            }
+            mStruct.bgImgUri?.also {
+                loadImg(mAuthorBgImg, mStruct.bgImgUri!!)
             }
         }
 
-        fun hideImages(){
+        fun hideImages() {
             mImgGroup.visibility = View.GONE
         }
-
     }
 
 
@@ -139,5 +147,6 @@ class AuthorIntroAdapter : RecyclerView.Adapter<AuthorIntroAdapter.AuthorVH>() {
     ) {
         var imgUris: MutableList<Uri> = ArrayList(5)
         var authorName: String = "N/A"
+        var bgImgUri: Uri? = null
     }
 }

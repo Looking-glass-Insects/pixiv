@@ -1,6 +1,5 @@
 package com.eps3rd.pixiv.fragment
 
-import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -9,12 +8,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
-import android.widget.ImageView
-import androidx.constraintlayout.widget.Group
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.alibaba.android.arouter.facade.annotation.Route
-import com.bumptech.glide.Glide
 import com.eps3rd.pixiv.Constants
 import com.eps3rd.app.R
 import com.eps3rd.pixiv.AuthorIntroAdapter
@@ -34,7 +30,7 @@ class CollectionFragment : Fragment(), IFragment {
         const val TYPE_COLLECTION = "TYPE_COLLECTION"
         const val TYPE_AUTHOR_WORKS = "TYPE_AUTHOR_WORKS"
 
-        object sOnCheckedListener : CompoundButton.OnCheckedChangeListener {
+        object OnCheckedListener : CompoundButton.OnCheckedChangeListener {
             override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
                 Log.d(TAG,"Tag Check:$isChecked,${buttonView?.tag}")
             }
@@ -45,7 +41,7 @@ class CollectionFragment : Fragment(), IFragment {
             val tag = layoutInflater.inflate(R.layout.collection_header_tag,null,false) as Chip
             tag.setText(text)
             tag.tag = text
-            tag.setOnCheckedChangeListener(sOnCheckedListener)
+            tag.setOnCheckedChangeListener(OnCheckedListener)
             return tag
         }
 
@@ -80,6 +76,8 @@ class CollectionFragment : Fragment(), IFragment {
             TYPE_COLLECTION -> {
                 val viewGroup  = inflater.inflate(R.layout.collection_header_tags, null, false)
                 val tags = viewGroup.requireViewById<ChipGroup>(R.id.tags)
+
+                //DEBUG CODE
                 tags.addView(buildTag(inflater,"test1"))
                 tags.addView(buildTag(inflater,"test2"))
                 mHeader.addView(viewGroup)

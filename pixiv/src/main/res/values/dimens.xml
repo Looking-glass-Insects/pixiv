@@ -17,4 +17,5 @@
     <dimen name="author_intro_margin">5dp</dimen>
     <dimen name="author_intro_icon_margin_start">10dp</dimen>
     <dimen name="author_intro_name_max_width">60dp</dimen>
+    <dimen name="detail_collection_btn_size">40dp</dimen>
 </resources>
