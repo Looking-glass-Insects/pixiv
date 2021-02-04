@@ -1,18 +1,25 @@
 package com.eps3rd.app
 
 
+import android.app.SearchManager
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
+import android.provider.SearchRecentSuggestions
 import android.util.Log
 import android.view.*
+import android.view.inputmethod.EditorInfo
 import android.widget.CompoundButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.MenuItemCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -34,7 +41,6 @@ import com.tencent.mmkv.MMKV
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.lang.Exception
 import com.eps3rd.pixiv.Constants as PixivConstants
 
 
@@ -485,8 +491,34 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.main, menu)
+
+        val searchItem = menu.findItem(R.id.action_search)
+        val mSearchView: SearchView = MenuItemCompat.getActionView(searchItem) as SearchView
+        mSearchView.setIconifiedByDefault(true)
+        mSearchView.isSubmitButtonEnabled = true
+        mSearchView.imeOptions = EditorInfo.IME_ACTION_SEARCH
+        mSearchView.isIconified = true
+        mSearchView.queryHint = "请输入关键字"
+        mSearchView.clearFocus()
+        mSearchView.setOnQueryTextFocusChangeListener { v, hasFocus ->
+            Log.d(TAG,"QueryTextFocus:$hasFocus")
+        }
+        mSearchView.setOnQueryTextListener(object :
+            SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                Log.d(TAG,"$query")
+                SearchRecentSuggestions(this@MainActivity, SuggestionProvider.AUTHORITY, SuggestionProvider.MODE)
+                    .saveRecentQuery(query, null)
+                mSearchView.clearFocus()
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+                Log.d(TAG,"onQueryTextChange")
+                return false
+            }
+        })
         return true
     }
 

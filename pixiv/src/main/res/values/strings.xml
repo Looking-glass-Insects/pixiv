@@ -20,6 +20,6 @@
 
     <string name="toast_success">success</string>
     <string name="toast_fail">fail</string>
-    <string name="save_img">save original image</string>
+    <string name="save_img">save</string>
     <string name="text_relative">Relative</string>
 </resources>

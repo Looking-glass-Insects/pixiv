@@ -6,7 +6,7 @@
     <string name="nav_header_title">Android Studio</string>
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_search">Search</string>
 
     <string name="menu_home">Home</string>
     <string name="menu_gallery">Gallery</string>
@@ -38,4 +38,5 @@
     <string name="drawer_item_control_disable_top">Disable top tab</string>
     <string name="drawer_item_control_drag">Drag to sort</string>
     <string name="drawer_item_cache">Clear Cache</string>
+    <string name="search_hint">test search hint</string>
 </resources>
