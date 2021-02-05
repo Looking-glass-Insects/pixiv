@@ -1,7 +1,7 @@
 package com.eps3rd.app
 
 import android.content.SearchRecentSuggestionsProvider
-
+@Deprecated("not used")
 class SuggestionProvider: SearchRecentSuggestionsProvider() {
 
     init {

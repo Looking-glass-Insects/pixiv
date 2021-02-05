@@ -7,6 +7,7 @@
     tools:context=".MainActivity">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/Theme.Pixiv.AppBarOverlay">
@@ -16,29 +17,53 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:popupTheme="@style/Theme.Pixiv.PopupOverlay"
-            app:layout_scrollFlags="scroll"/>
+            app:layout_scrollFlags="scroll"
+            app:popupTheme="@style/Theme.Pixiv.PopupOverlay" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:visibility="gone"
+            android:id="@+id/suggestion_view_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/color_primary"
+            android:padding="@dimen/fragment_default_padding">
+            <TextView
+                android:id="@+id/tv_clear_suggestion"
+                style="@style/TextAppearance.MaterialComponents.Subtitle1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:foreground="@drawable/card_foreground"
+                android:text="@string/clear_suggestion"
+                app:layout_constraintTop_toTopOf="parent" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_search_suggestion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_clear_suggestion" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab_layout"
-            android:elevation="0dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:elevation="0dp" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
     <com.eps3rd.app.BottomView
         android:id="@+id/bottom_button"
         android:layout_width="?attr/actionBarSize"
         android:layout_height="?attr/actionBarSize"
-        android:background="@drawable/bg_bottom_button"
-        android:alpha="0.7"
-        android:layout_marginBottom="48dp"
         android:layout_gravity="bottom|right"
-        app:layout_behavior="@string/behavior_bottom_button"/>
+        android:layout_marginBottom="48dp"
+        android:alpha="0.7"
+        android:background="@drawable/bg_bottom_button"
+        app:layout_behavior="@string/behavior_bottom_button" />
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/main_bottom"
@@ -46,8 +71,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:elevation="0dp"
+        app:layout_behavior="@string/behavior_bottom_area"
         app:tabIndicatorColor="@null"
-        app:tabSelectedTextColor="@color/black"
-        app:layout_behavior="@string/behavior_bottom_area"/>
-
+        app:tabSelectedTextColor="@color/black" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

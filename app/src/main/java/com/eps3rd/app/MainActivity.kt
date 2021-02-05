@@ -67,10 +67,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mDrawerLayout: DrawerLayout
     private lateinit var mViewPager: ViewPager2
     private lateinit var mViewPagerAdapter: MainActivityPagerAdapter
-    private lateinit  var mTabLayout: TabLayout
+    private lateinit var mTabLayout: TabLayout
     private var mBottomButtonControlSwitch: SwitchMaterial? = null
     private var mTopButtonControlSwitch: SwitchMaterial? = null
-
+    private var mSuggestionViewPresenter: SearchSuggestionViewPresenter? = null
 
     private var mDrawerItemPrefString: String = DEFAULT_DRAWER_ITEM
     private var mDrawerControlPrefString: String = DEFAULT_DRAWER_CONTROL_ITEM
@@ -113,7 +113,7 @@ class MainActivity : AppCompatActivity() {
         mBottomButton = findViewById(R.id.bottom_button)
         mBottomArea = findViewById(R.id.main_bottom)
         mTabLayout = findViewById<TabLayout>(R.id.tab_layout)
-
+        mSuggestionViewPresenter = SearchSuggestionViewPresenter(findViewById(R.id.suggestion_view_container))
 
         mBottomButton.setOnClickListener {
             if (mBottomArea.visibility == View.GONE) {
@@ -205,6 +205,7 @@ class MainActivity : AppCompatActivity() {
             "onDestroy:$mDrawerItemPrefString,$mDrawerControlPrefString,$mDrawerItemExpandString"
         )
         kv.encode(KEY_DRAWER_ITEM_EXPAND, mDrawerItemExpandString)
+
         super.onDestroy()
     }
 
@@ -403,7 +404,8 @@ class MainActivity : AppCompatActivity() {
                 val kv: MMKV = MMKV.defaultMMKV()!!
                 mBottomButtonControlSwitch?.isChecked =
                     kv.decodeBool(KEY_DRAWER_CONTROL_SWITCH_BOTTOM)
-                mTopButtonControlSwitch?.isChecked = kv.decodeBool(KEY_DRAWER_CONTROL_SWITCH_TOP)
+                mTopButtonControlSwitch?.isChecked =
+                    kv.decodeBool(KEY_DRAWER_CONTROL_SWITCH_TOP)
 
                 container.findViewById<RecyclerView>(R.id.rv_fragment_sort).apply {
                     this.adapter = mControlItemAdapter
@@ -499,26 +501,39 @@ class MainActivity : AppCompatActivity() {
         mSearchView.isSubmitButtonEnabled = true
         mSearchView.imeOptions = EditorInfo.IME_ACTION_SEARCH
         mSearchView.isIconified = true
-        mSearchView.queryHint = "请输入关键字"
+        mSearchView.queryHint = resources.getString(R.string.query_hint)
         mSearchView.clearFocus()
         mSearchView.setOnQueryTextFocusChangeListener { v, hasFocus ->
-            Log.d(TAG,"QueryTextFocus:$hasFocus")
+            if (hasFocus) {
+                // show rv with adapter
+                mSuggestionViewPresenter!!.showSuggestion()
+            } else {
+                // hide rv, save suggestion
+                mSuggestionViewPresenter!!.hideAndSaveSuggestion()
+            }
         }
         mSearchView.setOnQueryTextListener(object :
             SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
-                Log.d(TAG,"$query")
-                SearchRecentSuggestions(this@MainActivity, SuggestionProvider.AUTHORITY, SuggestionProvider.MODE)
-                    .saveRecentQuery(query, null)
+                Log.d(TAG, "$query")
+                mSuggestionViewPresenter!!.addItem(query)
                 mSearchView.clearFocus()
                 return false
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
-                Log.d(TAG,"onQueryTextChange")
+                Log.d(TAG, "onQueryTextChange")
+                mSuggestionViewPresenter!!.addFilterString(newText)
                 return false
             }
         })
+
+        mSuggestionViewPresenter!!.mClickListener = object:
+            SearchSuggestionViewPresenter.OnClickListener{
+            override fun onClick(query: String) {
+                mSearchView.setQuery(query,false)
+            }
+        }
         return true
     }
 
