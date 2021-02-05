@@ -41,6 +41,15 @@
                 app:layout_constraintBottom_toBottomOf="@+id/drawer_header"
                 app:layout_constraintTop_toTopOf="@+id/drawer_header"
                 app:layout_constraintStart_toStartOf="@+id/drawer_header" />
+            <TextView
+                android:id="@+id/tv_user_name"
+                android:text="@string/signin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toEndOf="@id/drawer_user_img"
+                app:layout_constraintTop_toTopOf="@id/drawer_user_img"
+                app:layout_constraintBottom_toBottomOf="@id/drawer_user_img"
+                app:layout_constraintEnd_toEndOf="parent"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.core.widget.NestedScrollView

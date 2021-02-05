@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.tencent.mmkv.MMKV
@@ -14,22 +15,24 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.*
-import kotlin.collections.ArrayList
+
 
 class SearchSuggestionViewPresenter(rootView: ViewGroup) {
 
-    companion object{
+    companion object {
         const val TAG = "SearchSuggestionViewPresenter"
         const val KEY_SUGGESTIONS = "KEY_SUGGESTIONS"
     }
 
     private var mContext: Context
-    private var mSuggestionContainer:ViewGroup
+    private var mSuggestionContainer: ViewGroup
     private var mClearSuggestionView: View
     private var mRvSuggestion: RecyclerView
     private val mAdapter = SuggestionItemAdapter()
     var mClickListener: OnClickListener? = null
+
+    private val mSavedItems = ArrayList<String>()
+
 
     init {
         mContext = rootView.context
@@ -46,46 +49,80 @@ class SearchSuggestionViewPresenter(rootView: ViewGroup) {
     }
 
     fun addFilterString(query: String) {
-        Log.d(TAG,"addFilterString:$query")
+        Log.d(TAG, "addFilterString:$query,${mSavedItems.size},${mAdapter.mItems.size}")
+        val oldItems = mAdapter.mItems
+        val newItems = ArrayList<String>()
+
+        for (s in mSavedItems) {
+            if (s.startsWith(query, true)) {
+                newItems.add(s)
+            }
+        }
+        val result = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
+            override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+                return oldItems[oldItemPosition] == newItems[newItemPosition]
+            }
+
+            override fun getOldListSize(): Int {
+                return oldItems.size
+            }
+
+            override fun getNewListSize(): Int {
+                return newItems.size
+            }
+
+            override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+                return areItemsTheSame(oldItemPosition, newItemPosition)
+            }
+        }, true)
+        mAdapter.mItems = newItems
+        result.dispatchUpdatesTo(mAdapter)
     }
 
-    private fun removeItem(position: Int){
-        Log.d(TAG,"removeItem:$position")
+    private fun removeItem(position: Int) {
+        Log.d(TAG, "removeItem:$position")
+        mSavedItems.remove(mAdapter.mItems.get(position))
         mAdapter.mItems.removeAt(position)
         mAdapter.notifyItemRemoved(position)
     }
 
     fun showSuggestion() {
-        Log.d(TAG,"showSuggestion")
-        GlobalScope.launch(Dispatchers.IO){
+        Log.d(TAG, "showSuggestion")
+        mAdapter.mItems.clear()
+        mSavedItems.clear()
+        GlobalScope.launch(Dispatchers.IO) {
             val kv: MMKV = MMKV.defaultMMKV()!!
             val set = kv.decodeStringSet(KEY_SUGGESTIONS)
-            Log.d(TAG,"showSuggestion$set")
+            Log.d(TAG, "showSuggestion$set")
             if (set == null || set.isEmpty())
                 return@launch
-            for (s in set){
+            for (s in set) {
                 mAdapter.mItems.add(s)
+                mSavedItems.add(s)
             }
-            withContext(Dispatchers.Main){
+            withContext(Dispatchers.Main) {
                 mAdapter.notifyDataSetChanged()
                 mSuggestionContainer.visibility = View.VISIBLE
             }
         }
     }
 
-    fun addItem(query: String){
-        Log.d(TAG,"addItem:$query")
+    fun addItem(query: String) {
+        Log.d(TAG, "addItem:$query")
+        if (mAdapter.mItems.contains(query))
+            return
         mAdapter.mItems.add(query)
+        mSavedItems.add(query)
         mAdapter.notifyItemInserted(mAdapter.mItems.size)
     }
 
     fun hideAndSaveSuggestion() {
-        Log.d(TAG,"hideAndSaveSuggestion")
-        GlobalScope.launch(Dispatchers.IO){
+        Log.d(TAG, "hideAndSaveSuggestion")
+        GlobalScope.launch(Dispatchers.IO) {
             val kv: MMKV = MMKV.defaultMMKV()!!
-            Log.d(TAG,"hide:${mAdapter.mItems.toSet()}")
-            kv.encode(KEY_SUGGESTIONS, mAdapter.mItems.toSet())
-            withContext(Dispatchers.Main){
+            Log.d(TAG, "hide:${mSavedItems.toSet()}")
+            kv.encode(KEY_SUGGESTIONS, mSavedItems.toSet())
+            withContext(Dispatchers.Main) {
                 mSuggestionContainer.visibility = View.GONE
                 mAdapter.mItems.clear()
             }
@@ -93,9 +130,10 @@ class SearchSuggestionViewPresenter(rootView: ViewGroup) {
     }
 
     private fun clearHistory() {
-        Log.d(TAG,"clearHistory")
+        Log.d(TAG, "clearHistory")
         mAdapter.mItems.clear()
         mAdapter.notifyDataSetChanged()
+        mSavedItems.clear()
     }
 
 
@@ -116,10 +154,10 @@ class SearchSuggestionViewPresenter(rootView: ViewGroup) {
         override fun onBindViewHolder(holder: SuggestionItemVH, position: Int) {
             holder.mTv.text = mItems[position]
             holder.mContainer.setOnClickListener {
-                presenter?.mClickListener?.onClick(mItems[position])
+                presenter?.mClickListener?.onClick(mItems[holder.adapterPosition])
             }
             holder.mClearBtn.setOnClickListener {
-                presenter?.removeItem(position)
+                presenter?.removeItem(holder.adapterPosition)
             }
         }
     }

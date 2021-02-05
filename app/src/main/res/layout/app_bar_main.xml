@@ -33,6 +33,7 @@
                 android:layout_height="wrap_content"
                 android:foreground="@drawable/card_foreground"
                 android:text="@string/clear_suggestion"
+                android:padding="@dimen/fragment_default_padding"
                 app:layout_constraintTop_toTopOf="parent" />
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_search_suggestion"

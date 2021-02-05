@@ -7,12 +7,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="@dimen/fragment_default_padding">
+
         <ImageView
             android:id="@+id/image_work"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="300dp"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/work_info_container"
             android:layout_width="match_parent"
@@ -81,7 +84,14 @@
             android:id="@+id/btn_collection"
             android:layout_width="@dimen/detail_collection_btn_size"
             android:layout_height="@dimen/detail_collection_btn_size"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:scaleType="center"
+            app:tint="@null"
+            app:backgroundTint = "@color/white"
+            app:elevation="3dp"
+            app:borderWidth="0dp"
+            app:srcCompat="@drawable/ic_round_favorite_border_24"
+            app:layout_constraintBottom_toBottomOf="@id/image_work"
+            app:layout_constraintTop_toBottomOf="@id/image_work"
             app:layout_constraintEnd_toEndOf="parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

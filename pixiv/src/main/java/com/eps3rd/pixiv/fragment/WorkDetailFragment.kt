@@ -1,5 +1,7 @@
 package com.eps3rd.pixiv.fragment
 
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -10,16 +12,18 @@ import android.view.ViewGroup
 import android.widget.CompoundButton
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
+import androidx.core.widget.ImageViewCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.alibaba.android.arouter.facade.annotation.Route
-import com.bumptech.glide.Glide
 import com.eps3rd.pixiv.Constants
 import com.eps3rd.app.R
 import com.eps3rd.pixiv.AuthorIntroAdapter
 import com.eps3rd.pixiv.IFragment
 import com.eps3rd.pixiv.ImageCardAdapter
 import com.google.android.material.chip.ChipGroup
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 
 @Route(path = Constants.FRAGMENT_PATH_WORK_DETAIL)
@@ -27,12 +31,6 @@ class WorkDetailFragment : Fragment(), IFragment {
 
     companion object{
        const val TAG = "WorkDetailFragment"
-
-        object OnCheckedListener : CompoundButton.OnCheckedChangeListener {
-            override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
-                Log.d(CollectionFragment.TAG,"Tag Check:$isChecked,${buttonView?.tag}")
-            }
-        }
     }
 
     private lateinit var mImage: ImageView
@@ -42,6 +40,19 @@ class WorkDetailFragment : Fragment(), IFragment {
     private lateinit var mTagsContainer:ChipGroup
     private lateinit var mAuthorIntroHolder: AuthorIntroAdapter.AuthorVH
     private lateinit var mRvRelatives: RecyclerView
+    private lateinit var mFloatingButton: FloatingActionButton
+
+
+    private var mCollected = false
+        set(value){
+            field = value
+            if (mCollected){
+                mFloatingButton.setImageResource(R.drawable.ic_round_favorite_24)
+            }
+            else{
+                mFloatingButton.setImageResource(R.drawable.ic_round_favorite_border_24)
+            }
+        }
 
     private val mRelativeAdapter: ImageCardAdapter = ImageCardAdapter()
 
@@ -50,7 +61,7 @@ class WorkDetailFragment : Fragment(), IFragment {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_detail, container, false)
-
+        mFloatingButton = view.findViewById(R.id.btn_collection)
         mImage = view.findViewById(R.id.image_work)
         mTvTime = view.findViewById(R.id.work_time)
         mTvViews = view.findViewById(R.id.work_views)
@@ -62,6 +73,16 @@ class WorkDetailFragment : Fragment(), IFragment {
         mRelativeAdapter.mShowAuthor = false
         mRelativeAdapter.mShowOverlay = false
         mRvRelatives.adapter = mRelativeAdapter
+
+//        ImageViewCompat.setImageTintList(
+//            mFloatingButton,
+//            ColorStateList.valueOf(Color.WHITE)
+//        )
+
+        mFloatingButton.setOnClickListener {
+            mCollected = !mCollected
+            Toast.makeText(context,"hello",Toast.LENGTH_SHORT).show()
+        }
 
         // DEBUG CODE
         addDebugData()
@@ -75,7 +96,7 @@ class WorkDetailFragment : Fragment(), IFragment {
     }
 
 
-    fun addDebugData(){
+    private fun addDebugData(){
         mAuthorIntroHolder.mStruct = AuthorIntroAdapter.AuthorStruct(FollowingFragment.DEBUG_URI2).apply{
             this.authorName = "t1"
             this.imgUris.add(FollowingFragment.DEBUG_URI2)

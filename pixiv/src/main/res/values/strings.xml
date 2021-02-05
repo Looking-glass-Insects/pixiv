@@ -22,4 +22,8 @@
     <string name="toast_fail">fail</string>
     <string name="save_img">save</string>
     <string name="text_relative">Relative</string>
+    <string name="user_name">User Name:</string>
+    <string name="password">Password:</string>
+    <string name="signin">Sign in</string>
+    <string name="cancel">Cancel</string>
 </resources>

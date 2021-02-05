@@ -1,25 +1,27 @@
 package com.eps3rd.app
 
-
-import android.app.SearchManager
-import android.content.ComponentName
-import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.content.res.Configuration
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
-import android.provider.SearchRecentSuggestions
 import android.util.Log
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.widget.CompoundButton
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.MenuItemCompat
+import androidx.core.widget.ImageViewCompat
+import androidx.core.widget.TextViewCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -94,18 +96,15 @@ class MainActivity : AppCompatActivity() {
                 throw IllegalStateException("NO SUCH TAG")
             }
         }
-
         mViewPagerAdapter.addItemFirst(fragment)
         mDrawerLayout.closeDrawer(Gravity.LEFT)
         mViewPager.post { mViewPager.currentItem = 0 }
-
     }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         mDrawerHeaderContainer = findViewById<ViewGroup>(R.id.drawer_header_container)
         mDrawerHeader = findViewById(R.id.drawer_header)
         mDrawerList = findViewById(R.id.drawer_list)
@@ -123,7 +122,27 @@ class MainActivity : AppCompatActivity() {
             }
         }
         mDrawerHeaderContainer.setOnClickListener {
-            startActivity(Intent(this@MainActivity, SplashActivity::class.java))
+
+            //start to sign in
+
+            val builder = AlertDialog.Builder(this@MainActivity)
+            val view =  this@MainActivity.layoutInflater.inflate(R.layout.fragment_sign_in, null)
+
+            builder.setView(view)
+                // Add action buttons
+                .setPositiveButton(R.string.signin,
+                    DialogInterface.OnClickListener { dialog, id ->
+                        // sign in the user ...
+                        val user  = view.findViewById<EditText>(R.id.et_user_name).text.toString()
+                        val pass = view.findViewById<EditText>(R.id.et_password).text.toString()
+                        Log.d(TAG,"sign in:$user,$pass")
+                    })
+                .setNegativeButton(R.string.cancel,
+                    DialogInterface.OnClickListener { dialog, id ->
+                        dialog.dismiss()
+                    })
+            builder.create().show()
+
         }
 
         mViewPager = findViewById<ViewPager2>(R.id.view_pager)
