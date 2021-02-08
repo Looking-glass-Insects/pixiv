@@ -26,9 +26,9 @@
     <string name="drawer_user_following">Following</string>
     <string name="drawer_user_follower">Followers</string>
 
-    <string name="behavior_bottom_area">com.eps3rd.app.BottomAreaBehavior</string>
-    <string name="behavior_bottom_button">com.eps3rd.app.BottomButtonBehavior</string>
-    <string name="drawer_collapse_behavior">com.eps3rd.app.DrawerCollapseBehavior</string>
+    <string name="behavior_bottom_area">com.eps3rd.app.ui.BottomAreaBehavior</string>
+    <string name="behavior_bottom_button">com.eps3rd.app.ui.BottomButtonBehavior</string>
+    <string name="drawer_collapse_behavior">com.eps3rd.app.ui.DrawerCollapseBehavior</string>
 
 <!--    Drawer Items-->
     <string name="drawer_item_debug">Debug</string>

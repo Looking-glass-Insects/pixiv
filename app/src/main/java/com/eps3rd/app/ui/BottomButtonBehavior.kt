@@ -1,14 +1,11 @@
-package com.eps3rd.app
+package com.eps3rd.app.ui
 
 import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
-import android.view.ViewGroup
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.view.marginBottom
-import androidx.core.view.updateLayoutParams
-import com.google.android.material.appbar.AppBarLayout
+import com.eps3rd.app.R
 
 class BottomButtonBehavior : CoordinatorLayout.Behavior<View> {
     constructor() : super()

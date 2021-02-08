@@ -1,4 +1,4 @@
-package com.eps3rd.app
+package com.eps3rd.app.adapter
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager

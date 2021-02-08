@@ -65,6 +65,11 @@ dependencies {
     kapt 'com.github.bumptech.glide:compiler:4.11.0'
     kapt 'com.alibaba:arouter-compiler:1.2.2'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.3.0' //json转换
+    implementation 'com.squareup.retrofit2:converter-scalars:2.3.0'//String 类型转换
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.3.1'
 }
 repositories {
     mavenCentral()

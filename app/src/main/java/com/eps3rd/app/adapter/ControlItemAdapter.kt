@@ -1,16 +1,21 @@
-package com.eps3rd.app
+package com.eps3rd.app.adapter
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.eps3rd.app.R
 
 class ControlItemAdapter :
     BaseDragAdapter<ControlItemAdapter.VH, ControlItemAdapter.ControlItem>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
-        return VH(LayoutInflater.from(parent.context).inflate(R.layout.item_control, parent, false))
+        return VH(
+            LayoutInflater.from(
+                parent.context
+            ).inflate(R.layout.item_control, parent, false)
+        )
     }
 
     override fun onBindViewHolder(holder: VH, position: Int) {

@@ -1,4 +1,4 @@
-package com.eps3rd.app
+package com.eps3rd.app.ui
 
 import android.content.Context
 import android.util.AttributeSet

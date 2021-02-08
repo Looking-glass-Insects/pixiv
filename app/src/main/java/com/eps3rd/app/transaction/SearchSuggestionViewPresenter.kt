@@ -1,4 +1,4 @@
-package com.eps3rd.app
+package com.eps3rd.app.transaction
 
 import android.content.Context
 import android.util.Log
@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.eps3rd.app.R
 import com.tencent.mmkv.MMKV
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -28,7 +29,8 @@ class SearchSuggestionViewPresenter(rootView: ViewGroup) {
     private var mSuggestionContainer: ViewGroup
     private var mClearSuggestionView: View
     private var mRvSuggestion: RecyclerView
-    private val mAdapter = SuggestionItemAdapter()
+    private val mAdapter =
+        SuggestionItemAdapter()
     var mClickListener: OnClickListener? = null
 
     private val mSavedItems = ArrayList<String>()
@@ -143,7 +145,11 @@ class SearchSuggestionViewPresenter(rootView: ViewGroup) {
         var presenter: SearchSuggestionViewPresenter? = null
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SuggestionItemVH {
             return SuggestionItemVH(
-                LayoutInflater.from(parent.context).inflate(R.layout.item_suggestion, parent, false)
+                LayoutInflater.from(parent.context).inflate(
+                    R.layout.item_suggestion,
+                    parent,
+                    false
+                )
             )
         }
 

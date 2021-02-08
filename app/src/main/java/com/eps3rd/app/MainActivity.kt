@@ -2,17 +2,13 @@ package com.eps3rd.app
 
 import android.content.DialogInterface
 import android.content.Intent
-import android.content.res.ColorStateList
 import android.content.res.Configuration
-import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.widget.CompoundButton
-import android.widget.EditText
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
@@ -20,8 +16,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.MenuItemCompat
-import androidx.core.widget.ImageViewCompat
-import androidx.core.widget.TextViewCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -31,11 +25,20 @@ import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.FitCenter
+import com.eps3rd.app.adapter.ControlItemAdapter
+import com.eps3rd.app.adapter.ExpandListAdapter
+import com.eps3rd.app.adapter.MainActivityPagerAdapter
+import com.eps3rd.app.transaction.SearchSuggestionViewPresenter
+import com.eps3rd.app.transaction.UserHeadPresenter
+import com.eps3rd.app.ui.BottomAreaBehavior
 import com.eps3rd.baselibrary.Constants
+import com.eps3rd.pixiv.GlideApp
 import com.eps3rd.pixiv.GlideCircleBorderTransform
 import com.eps3rd.pixiv.GlideSettingsModule
 import com.eps3rd.pixiv.IFragment
+import com.eps3rd.pixiv.api.UserHandle
 import com.eps3rd.pixiv.fragment.CollectionFragment
+import com.eps3rd.pixiv.models.UserModel
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -43,6 +46,7 @@ import com.tencent.mmkv.MMKV
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import retrofit2.Response
 import com.eps3rd.pixiv.Constants as PixivConstants
 
 
@@ -60,10 +64,9 @@ class MainActivity : AppCompatActivity() {
         private const val DEFAULT_DRAWER_CONTROL_ITEM = "HOME,BLANK"
     }
 
-    private lateinit var mDrawerHeaderContainer: ViewGroup
-    private lateinit var mDrawerHeader: ImageView
+    private lateinit var mUserHeadPresenter: UserHeadPresenter
+
     private lateinit var mDrawerList: RecyclerView
-    private lateinit var mUserImage: ImageView
     private lateinit var mBottomButton: View
     private lateinit var mBottomArea: TabLayout
     private lateinit var mDrawerLayout: DrawerLayout
@@ -72,7 +75,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mTabLayout: TabLayout
     private var mBottomButtonControlSwitch: SwitchMaterial? = null
     private var mTopButtonControlSwitch: SwitchMaterial? = null
-    private var mSuggestionViewPresenter: SearchSuggestionViewPresenter? = null
+    private lateinit var mSuggestionViewPresenter: SearchSuggestionViewPresenter
 
     private var mDrawerItemPrefString: String = DEFAULT_DRAWER_ITEM
     private var mDrawerControlPrefString: String = DEFAULT_DRAWER_CONTROL_ITEM
@@ -93,7 +96,7 @@ class MainActivity : AppCompatActivity() {
                     .navigation() as Fragment
             }
             else -> {
-                throw IllegalStateException("NO SUCH TAG")
+                throw IllegalStateException("NO SUCH TAG:${it.tag}")
             }
         }
         mViewPagerAdapter.addItemFirst(fragment)
@@ -105,14 +108,17 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        mDrawerHeaderContainer = findViewById<ViewGroup>(R.id.drawer_header_container)
-        mDrawerHeader = findViewById(R.id.drawer_header)
+        mUserHeadPresenter = UserHeadPresenter(findViewById(android.R.id.content))
         mDrawerList = findViewById(R.id.drawer_list)
-        mUserImage = findViewById(R.id.drawer_user_img)
         mBottomButton = findViewById(R.id.bottom_button)
         mBottomArea = findViewById(R.id.main_bottom)
         mTabLayout = findViewById<TabLayout>(R.id.tab_layout)
-        mSuggestionViewPresenter = SearchSuggestionViewPresenter(findViewById(R.id.suggestion_view_container))
+        mSuggestionViewPresenter =
+            SearchSuggestionViewPresenter(
+                findViewById(
+                    R.id.suggestion_view_container
+                )
+            )
 
         mBottomButton.setOnClickListener {
             if (mBottomArea.visibility == View.GONE) {
@@ -120,29 +126,6 @@ class MainActivity : AppCompatActivity() {
             } else {
                 BottomAreaBehavior.hide(mBottomArea)
             }
-        }
-        mDrawerHeaderContainer.setOnClickListener {
-
-            //start to sign in
-
-            val builder = AlertDialog.Builder(this@MainActivity)
-            val view =  this@MainActivity.layoutInflater.inflate(R.layout.fragment_sign_in, null)
-
-            builder.setView(view)
-                // Add action buttons
-                .setPositiveButton(R.string.signin,
-                    DialogInterface.OnClickListener { dialog, id ->
-                        // sign in the user ...
-                        val user  = view.findViewById<EditText>(R.id.et_user_name).text.toString()
-                        val pass = view.findViewById<EditText>(R.id.et_password).text.toString()
-                        Log.d(TAG,"sign in:$user,$pass")
-                    })
-                .setNegativeButton(R.string.cancel,
-                    DialogInterface.OnClickListener { dialog, id ->
-                        dialog.dismiss()
-                    })
-            builder.create().show()
-
         }
 
         mViewPager = findViewById<ViewPager2>(R.id.view_pager)
@@ -183,7 +166,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        val kv: MMKV = MMKV.defaultMMKV()!!
+        val kv: MMKV = UserHandle.kv!!
         val builder = StringBuilder()
         for (item in mDrawerItemAdapter.mTagList) {
             builder.append(item).append(",")
@@ -253,6 +236,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
+        Log.d(TAG, "intent:$intent")
         intent?.let {
             val f = it.getBundleExtra(Constants.MAIN_ACTIVITY_REQUEST) ?: return
             val fragment: Fragment =
@@ -303,18 +287,9 @@ class MainActivity : AppCompatActivity() {
         mDrawerList.adapter = mDrawerItemAdapter
         mDrawerList.layoutManager = LinearLayoutManager(this)
 
-
-
-        Glide.with(this)
-            .load(Uri.parse("android.resource://com.eps3rd.pixiv/" + R.drawable.bg_drawer_item))
-            .transform(
-                FitCenter(),
-                GlideCircleBorderTransform(
-                    4,
-                    resources.getColor(R.color.color_primary)
-                )
-            ).into(mUserImage)
+        mUserHeadPresenter.setUp()
     }
+
 
     private fun setupBottomAndPager() {
         val items = mDrawerControlPrefString.split(",")
@@ -525,32 +500,32 @@ class MainActivity : AppCompatActivity() {
         mSearchView.setOnQueryTextFocusChangeListener { v, hasFocus ->
             if (hasFocus) {
                 // show rv with adapter
-                mSuggestionViewPresenter!!.showSuggestion()
+                mSuggestionViewPresenter.showSuggestion()
             } else {
                 // hide rv, save suggestion
-                mSuggestionViewPresenter!!.hideAndSaveSuggestion()
+                mSuggestionViewPresenter.hideAndSaveSuggestion()
             }
         }
         mSearchView.setOnQueryTextListener(object :
             SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
-                Log.d(TAG, "$query")
-                mSuggestionViewPresenter!!.addItem(query)
+                Log.d(TAG, "query: $query")
+                mSuggestionViewPresenter.addItem(query)
                 mSearchView.clearFocus()
                 return false
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
                 Log.d(TAG, "onQueryTextChange")
-                mSuggestionViewPresenter!!.addFilterString(newText)
+                mSuggestionViewPresenter.addFilterString(newText)
                 return false
             }
         })
 
-        mSuggestionViewPresenter!!.mClickListener = object:
-            SearchSuggestionViewPresenter.OnClickListener{
+        mSuggestionViewPresenter.mClickListener = object :
+            SearchSuggestionViewPresenter.OnClickListener {
             override fun onClick(query: String) {
-                mSearchView.setQuery(query,false)
+                mSearchView.setQuery(query, false)
             }
         }
         return true
@@ -568,6 +543,5 @@ class MainActivity : AppCompatActivity() {
     private object DrawerControlProvider {
         val mMap = HashMap<String, ControlItemAdapter.ControlItem>()
     }
-
 
 }

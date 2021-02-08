@@ -1,4 +1,4 @@
-package com.eps3rd.app
+package com.eps3rd.app.adapter
 
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView

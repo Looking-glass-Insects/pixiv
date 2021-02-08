@@ -1,10 +1,11 @@
-package com.eps3rd.app
+package com.eps3rd.app.ui
 
 import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import com.eps3rd.app.R
 
 class DrawerCollapseBehavior : CoordinatorLayout.Behavior<View> {
     constructor() : super()
