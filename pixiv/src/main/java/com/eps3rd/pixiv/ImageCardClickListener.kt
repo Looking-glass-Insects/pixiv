@@ -43,6 +43,7 @@ class ImageCardClickListener : View.OnClickListener, View.OnLongClickListener {
     }
 
     override fun onLongClick(v: View?): Boolean {
+        return false
         val uri = v?.tag as Uri
         val context = v!!.context!!
         val mPopupWindow = ListPopupWindow(v!!.context!!)

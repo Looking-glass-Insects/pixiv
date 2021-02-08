@@ -1,6 +1,5 @@
 package com.eps3rd.pixiv
 
-import android.media.Image
 import android.net.Uri
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,12 +9,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.Group
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
-import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.eps3rd.app.R
+import com.eps3rd.pixiv.transform.GlideCircleBorderTransform
 import com.google.android.material.chip.Chip
-import org.w3c.dom.Text
 
 class AuthorIntroAdapter : RecyclerView.Adapter<AuthorIntroAdapter.AuthorVH>() {
 

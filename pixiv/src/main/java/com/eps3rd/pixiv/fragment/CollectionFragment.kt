@@ -96,7 +96,7 @@ class CollectionFragment : Fragment(), IFragment {
 
         // DEBUG CODE
         for (i in 0 until 5) {
-            mCollectionAdapter.addItem(ImageCardAdapter.CardStruct(Uri.parse("android.resource://com.eps3rd.pixiv/" + R.mipmap.test)))
+            mCollectionAdapter.addItem(ImageCardAdapter.CardStruct())
         }
         return view
     }

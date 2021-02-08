@@ -1,6 +1,7 @@
 package com.eps3rd.pixiv
 
 import android.annotation.SuppressLint
+import android.graphics.Bitmap
 import android.net.Uri
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,20 +9,24 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.load.resource.bitmap.FitCenter
+import com.bumptech.glide.request.target.Target
 import com.eps3rd.app.R
-import com.eps3rd.pixiv.ImageCardAdapter.ImageCardVH.Companion.NO_IMG_URI
+import com.eps3rd.pixiv.models.IllustsBean
+import com.eps3rd.pixiv.transform.UniformScaleTransform
 
 
 class ImageCardAdapter : RecyclerView.Adapter<ImageCardAdapter.ImageCardVH>() {
 
     companion object {
         const val TAG = "ImageCardAdapter"
-        const val DEFAULT_MAX_COUNT = 50
+        const val DEFAULT_MAX_COUNT = 10000
     }
 
     private val mImageItems = ArrayList<CardStruct>()
@@ -34,14 +39,22 @@ class ImageCardAdapter : RecyclerView.Adapter<ImageCardAdapter.ImageCardVH>() {
     var mMaxCount = DEFAULT_MAX_COUNT
     val mClickListener = ImageCardClickListener()
 
-
+    @Deprecated("optimize")
     fun addItem(item: CardStruct) {
-        if (mImageItems.size >= mMaxCount)
+        if (mImageItems.size >= mMaxCount) {
+            Log.d(TAG,"max count ignore")
             return
+        }
         mImageItems.add(item)
         notifyItemInserted(mImageItems.size)
     }
 
+    fun clearItem(){
+        if (mImageItems.size == 0)
+            return
+        mImageItems.clear()
+        notifyDataSetChanged()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageCardVH {
         return ImageCardVH(
@@ -58,12 +71,14 @@ class ImageCardAdapter : RecyclerView.Adapter<ImageCardAdapter.ImageCardVH>() {
 
     override fun onBindViewHolder(holder: ImageCardVH, position: Int) {
         val item = mImageItems[position]
+        holder.setTag(item.imageBean!!)
         holder.mCollectionCallback = mCollectionCallback
         holder.setImage(item.imgUri)
         holder.mShowAuthor = mShowAuthor
         holder.mShowOverlay = mShowOverlay
-        holder.setTag(item)
         holder.setListener(mClickListener)
+        holder.setAuthorAndTitle(item.authorIcon,item.authorName,item.imageTitle)
+        holder.setOverlayCount(item.imageCount)
         if (!mShowCollection)
             holder.mCollectionButton.visibility = View.GONE
     }
@@ -86,7 +101,7 @@ class ImageCardAdapter : RecyclerView.Adapter<ImageCardAdapter.ImageCardVH>() {
         private var mAuthorIcon: ImageView
         var mCollectionButton: ImageView
 
-        private val cardStruct: CardStruct = CardStruct(NO_IMG_URI)
+        private var cardStruct: CardStruct = CardStruct()
 
         var mCollectionCallback: CollectionCallback? = null
         var mCollected: Boolean = false
@@ -113,12 +128,10 @@ class ImageCardAdapter : RecyclerView.Adapter<ImageCardAdapter.ImageCardVH>() {
             mAuthorIcon = rootView.findViewById(R.id.author_small_icon)
 
             mCollectionButton.setOnClickListener {
-                mCollected = mCollectionCallback?.isCollected(cardStruct.imgUri) ?: false
-                mCollected = !mCollected
-                mCollectionCallback?.setCollected(cardStruct.imgUri, mCollected)
-                Glide.with(mCollectionButton)
-                    .load(if (mCollected) R.drawable.ic_round_favorite_24 else R.drawable.ic_round_favorite_border_24)
-                    .into(mCollectionButton)
+//                mCollectionCallback?.setCollected(cardStruct.imgUri, mCollected)
+//                Glide.with(mCollectionButton)
+//                    .load(if (mCollected) R.drawable.ic_round_favorite_24 else R.drawable.ic_round_favorite_border_24)
+//                    .into(mCollectionButton)
             }
 
             loadAuthor()
@@ -157,19 +170,17 @@ class ImageCardAdapter : RecyclerView.Adapter<ImageCardAdapter.ImageCardVH>() {
             mImageCount.text = cardStruct.imageCount
         }
 
-        fun setImage(uri: Uri) {
+        fun setImage(uri: GlideUrl?) {
             this.cardStruct.imgUri = uri
-
-            mCollected = this.mCollectionCallback?.isCollected(uri) ?: false
             GlideApp.with(mCollectionButton)
                 .load(if (mCollected) R.drawable.ic_round_favorite_24 else R.drawable.ic_round_favorite_border_24)
                 .into(mCollectionButton)
 
             GlideApp.with(mImageView)
+                .asBitmap()
                 .load(uri)
                 .placeholder(R.drawable.ic_round_image_search_24)
                 .error(R.drawable.ic_round_broken_image_24)
-                .transform(CenterCrop())
                 .into(mImageView)
         }
 
@@ -178,11 +189,12 @@ class ImageCardAdapter : RecyclerView.Adapter<ImageCardAdapter.ImageCardVH>() {
             mRootView.setOnClickListener(listener)
         }
 
-        fun setTag(tag: CardStruct){
-            mRootView.tag = tag.imgUri
+        fun setTag(tag: IllustsBean) {
+            mRootView.tag = tag
+            mCollected = tag.isIs_bookmarked
         }
 
-        fun setAuthorAndTitle(iconUri: Uri, name: String, title: String) {
+        fun setAuthorAndTitle(iconUri: GlideUrl?, name: String, title: String) {
             cardStruct.authorIcon = iconUri
             cardStruct.authorName = name
             cardStruct.imageTitle = title
@@ -195,36 +207,35 @@ class ImageCardAdapter : RecyclerView.Adapter<ImageCardAdapter.ImageCardVH>() {
             loadOverlay()
         }
     }
-
+    @Deprecated("changed")
     interface CollectionCallback {
-        fun isCollected(uri: Uri?): Boolean
-        fun setCollected(uri: Uri?, collected: Boolean)
+        fun isCollected(uri: GlideUrl?): Boolean
+        fun setCollected(uri: GlideUrl?, collected: Boolean)
     }
 
+    @Deprecated("changed")
     class CollectionCallbackImpl :
         CollectionCallback {
 
         var collected = false
 
-        override fun isCollected(uri: Uri?): Boolean {
+        override fun isCollected(uri: GlideUrl?): Boolean {
             Log.d(TAG, "isCollected uri:$uri")
             return collected
         }
 
-        override fun setCollected(uri: Uri?, collected: Boolean) {
+        override fun setCollected(uri: GlideUrl?, collected: Boolean) {
             Log.d(TAG, "setCollected uri:$uri")
             this.collected = collected
         }
-
     }
 
-    data class CardStruct(
-        var imgUri: Uri
-    ) {
+    class CardStruct {
+        var imgUri: GlideUrl? = null
         var imageCount: String = "NaN"
         var imageTitle: String = "Untitled"
         var authorName: String = "N/A"
-        var authorIcon: Uri = NO_IMG_URI
+        var authorIcon: GlideUrl? = null
+        var imageBean: IllustsBean? = null
     }
-
 }

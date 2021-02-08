@@ -33,6 +33,7 @@ class BasePixivApi {
 
     lateinit var accountApi: AccountApi
     lateinit var appApi: AppApi
+
     init {
         appApi = buildRetrofit(API_BASE_URL)!!.create(AppApi::class.java)
         accountApi = buildRetrofit(ACCOUNT_BASE_URL)!!.create(AccountApi::class.java)
@@ -70,6 +71,19 @@ class BasePixivApi {
                 return@withContext null
             }
         }
+
+
+    suspend fun getNextIllust(token: String, nextUrl: String) =
+        withContext(Dispatchers.Default) {
+            try {
+                val call = appApi.getNextIllust(token, nextUrl)
+                return@withContext call.execute()
+            } catch (e: Exception) {
+                Log.d(TAG, "error:${Log.getStackTraceString(e)}")
+                return@withContext null
+            }
+        }
+
 
     private fun getLogClient(): OkHttpClient.Builder? {
         val loggingInterceptor = HttpLoggingInterceptor(

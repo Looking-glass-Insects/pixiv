@@ -13,7 +13,7 @@ import androidx.appcompat.app.AlertDialog
 import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.eps3rd.app.R
 import com.eps3rd.pixiv.GlideApp
-import com.eps3rd.pixiv.GlideCircleBorderTransform
+import com.eps3rd.pixiv.transform.GlideCircleBorderTransform
 import com.eps3rd.pixiv.api.UserHandle
 import com.eps3rd.pixiv.models.UserModel
 import com.eps3rd.pixiv.util.GlideUtil

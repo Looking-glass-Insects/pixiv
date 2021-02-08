@@ -1,6 +1,5 @@
 package com.eps3rd.app
 
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
@@ -11,7 +10,6 @@ import android.view.inputmethod.EditorInfo
 import android.widget.CompoundButton
 import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
@@ -23,8 +21,6 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.eps3rd.app.adapter.ControlItemAdapter
 import com.eps3rd.app.adapter.ExpandListAdapter
 import com.eps3rd.app.adapter.MainActivityPagerAdapter
@@ -32,13 +28,10 @@ import com.eps3rd.app.transaction.SearchSuggestionViewPresenter
 import com.eps3rd.app.transaction.UserHeadPresenter
 import com.eps3rd.app.ui.BottomAreaBehavior
 import com.eps3rd.baselibrary.Constants
-import com.eps3rd.pixiv.GlideApp
-import com.eps3rd.pixiv.GlideCircleBorderTransform
 import com.eps3rd.pixiv.GlideSettingsModule
 import com.eps3rd.pixiv.IFragment
 import com.eps3rd.pixiv.api.UserHandle
 import com.eps3rd.pixiv.fragment.CollectionFragment
-import com.eps3rd.pixiv.models.UserModel
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -46,7 +39,6 @@ import com.tencent.mmkv.MMKV
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import retrofit2.Response
 import com.eps3rd.pixiv.Constants as PixivConstants
 
 

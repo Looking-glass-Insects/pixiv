@@ -105,7 +105,7 @@ class WorkDetailFragment : Fragment(), IFragment {
         mAuthorIntroHolder.notifyDataChanged()
 
         for (i in 0 until 5) {
-            mRelativeAdapter.addItem(ImageCardAdapter.CardStruct(Uri.parse("android.resource://com.eps3rd.pixiv/" + R.mipmap.test)))
+            mRelativeAdapter.addItem(ImageCardAdapter.CardStruct())
         }
 
     }
