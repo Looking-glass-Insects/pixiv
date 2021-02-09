@@ -1,4 +1,4 @@
-package com.eps3rd.pixiv
+package com.eps3rd.pixiv.adapter
 
 import android.net.Uri
 import android.util.Log
@@ -11,6 +11,9 @@ import androidx.constraintlayout.widget.Group
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.eps3rd.app.R
+import com.eps3rd.pixiv.AuthorIconClickListener
+import com.eps3rd.pixiv.GlideApp
+import com.eps3rd.pixiv.ImageCardClickListener
 import com.eps3rd.pixiv.transform.GlideCircleBorderTransform
 import com.google.android.material.chip.Chip
 
@@ -61,12 +64,17 @@ class AuthorIntroAdapter : RecyclerView.Adapter<AuthorIntroAdapter.AuthorVH>() {
         private var mAuthorName: TextView
         private var mAuthorBgImg: ImageView
         private var mFollowButton: Chip
-        private var mImageClickListener = ImageCardClickListener()
-        private var mAuthorIconClickListener = AuthorIconClickListener()
+        private var mImageClickListener =
+            ImageCardClickListener()
+        private var mAuthorIconClickListener =
+            AuthorIconClickListener()
         private var mImgGroup: Group
 
 
-        var mStruct: AuthorStruct = AuthorStruct(ImageCardAdapter.ImageCardVH.NO_IMG_URI)
+        var mStruct: AuthorStruct =
+            AuthorStruct(
+                ImageCardAdapter.ImageCardVH.NO_IMG_URI
+            )
 
         init {
             mImages.add(rootView.findViewById<ImageView>(R.id.img_1).apply {
@@ -104,7 +112,7 @@ class AuthorIntroAdapter : RecyclerView.Adapter<AuthorIntroAdapter.AuthorVH>() {
             val transform = if (imgView.id == R.id.icon) {
                 GlideCircleBorderTransform(
                     2,
-                    imgView.context.resources.getColor(R.color.black)
+                    imgView.context.resources.getColor(R.color.color_primary)
                 )
             } else {
                 CenterCrop()

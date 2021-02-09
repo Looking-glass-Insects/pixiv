@@ -23,7 +23,7 @@ import kotlinx.coroutines.*
 import java.io.File
 import java.lang.Exception
 
-
+@Deprecated("need to do")
 class ImageCardClickListener : View.OnClickListener, View.OnLongClickListener {
 
     companion object {
@@ -31,7 +31,9 @@ class ImageCardClickListener : View.OnClickListener, View.OnLongClickListener {
     }
 
     override fun onClick(v: View?) {
+
         Log.d(TAG, "onClick")
+        return
         val b = Bundle()
         b.putString(
             Constants.MAIN_ACTIVITY_START_FRAGMENT,

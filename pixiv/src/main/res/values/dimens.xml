@@ -4,12 +4,12 @@
     <dimen name="card_margin_img_collection">5dp</dimen>
     <dimen name="card_collection_size">25dp</dimen>
     <dimen name="card_author_small_icon_size">25dp</dimen>
-    <dimen name="card_overlay_height">15dp</dimen>
-    <dimen name="card_title_size">10sp</dimen>
-    <dimen name="card_author_size">8sp</dimen>
+    <dimen name="card_overlay_height">20dp</dimen>
+    <dimen name="card_title_size">15sp</dimen>
+    <dimen name="card_author_size">10sp</dimen>
     <dimen name="card_margin_small">3dp</dimen>
     <dimen name="card_text_max_width">100dp</dimen>
-
+    <dimen name="card_overlay_radius">2dp</dimen>
 
     <dimen name="fragment_default_padding">3dp</dimen>
     <dimen name="author_intro_height">180dp</dimen>
@@ -19,4 +19,5 @@
     <dimen name="author_intro_name_max_width">60dp</dimen>
     <dimen name="detail_collection_btn_size">56dp</dimen>
     <dimen name="input_default_width">200dp</dimen>
+
 </resources>

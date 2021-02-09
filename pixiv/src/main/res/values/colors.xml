@@ -11,7 +11,6 @@
     <color name="debug_color1">#6FD6FF</color>
     <color name="overlay">#88141414</color>
 
-
+    <color name="color_primary">#6FD6FF</color>
     <color name="design_default_background">#FFE0E0E0</color>
-
 </resources>

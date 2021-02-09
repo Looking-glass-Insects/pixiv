@@ -18,10 +18,13 @@
         android:id="@+id/container_overlay"
         android:layout_width="wrap_content"
         android:orientation="horizontal"
-        android:background="@color/overlay"
+        android:background="@drawable/card_overlay"
         android:layout_height="@dimen/card_overlay_height"
         android:layout_marginTop="@dimen/card_margin_small"
-        android:padding="@dimen/fragment_default_padding"
+        android:paddingTop="@dimen/fragment_default_padding"
+        android:paddingBottom="@dimen/fragment_default_padding"
+        android:paddingStart="@dimen/card_margin_img_collection"
+        android:paddingEnd="@dimen/card_margin_img_collection"
         app:layout_constraintEnd_toEndOf="@id/iv_collection"
         app:layout_constraintTop_toTopOf="parent">
 <!--        <ImageView-->
@@ -30,12 +33,13 @@
 <!--            android:layout_height="match_parent"/>-->
         <TextView
             android:id="@+id/img_count"
-            android:text="6"
-            android:textSize="@dimen/card_author_size"
-            android:textColor="@color/cardview_light_background"
-            android:layout_gravity="center_vertical"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="6"
+            android:textColor="@color/white"
+            android:textSize="@dimen/card_author_size" />
     </LinearLayout>
 
     <TextView
@@ -47,6 +51,11 @@
         android:textSize="@dimen/card_title_size"
         android:text="@string/app_name"
         android:textColor="@color/white"
+        android:textStyle="bold"
+        android:shadowColor="#FF000000"
+        android:shadowDx="1.5"
+        android:shadowDy="1.5"
+        android:shadowRadius="1.5"
         android:layout_marginBottom="@dimen/card_margin_small"
         app:layout_constraintBottom_toTopOf="@+id/author_small_icon"
         app:layout_constraintStart_toStartOf="@+id/author_small_icon" />
@@ -68,6 +77,12 @@
         android:maxWidth="@dimen/card_text_max_width"
         android:textSize="@dimen/card_author_size"
         android:textColor="@color/white"
+        android:textStyle="bold"
+        android:shadowColor="#FF000000"
+        android:shadowDx="1.5"
+        android:shadowDy="1.5"
+        android:shadowRadius="1.5"
+        android:layout_marginStart="@dimen/card_margin_small"
         app:layout_constraintBottom_toBottomOf="@+id/author_small_icon"
         app:layout_constraintStart_toEndOf="@id/author_small_icon"
         app:layout_constraintTop_toTopOf="@+id/author_small_icon" />

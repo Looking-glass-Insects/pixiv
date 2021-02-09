@@ -1,6 +1,5 @@
 package com.eps3rd.pixiv.fragment
 
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -13,9 +12,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.eps3rd.pixiv.Constants
 import com.eps3rd.app.R
-import com.eps3rd.pixiv.AuthorIntroAdapter
+import com.eps3rd.pixiv.adapter.AuthorIntroAdapter
 import com.eps3rd.pixiv.IFragment
-import com.eps3rd.pixiv.ImageCardAdapter
+import com.eps3rd.pixiv.adapter.ImageCardAdapter
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import java.lang.IllegalStateException
